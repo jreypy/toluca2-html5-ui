@@ -1,5 +1,6 @@
-var efectoFinalizado = function(index){
+var efectoFinalizado = function(index, event){
     console.log('efector finalizado [' , index);
+    console.log(event);
 };
 
 trucoTableRender = function (table) {
@@ -27,8 +28,8 @@ trucoTableRender = function (table) {
         // svgimg.setAttributeNS(null,'height','200');
         // svgimg.setAttributeNS(null,'width','200');
         svgimg.setAttributeNS('http://www.w3.org/1999/xlink','href', imageName);
-        svgimg.setAttributeNS(null,'x', H+point.x);
-        svgimg.setAttributeNS(null,'y', K-point.y);
+        svgimg.setAttributeNS(null,'x', point.x);
+        svgimg.setAttributeNS(null,'y', point.y);
         //svgimg.setAttribute('transform',  ' translate('+point.x+','+point.y+')');
         // svgimg.setAttributeNS(null,'height','100');
         // svgimg.setAttribute('transform',  ' translate('+H+','+K+')');
@@ -66,22 +67,21 @@ trucoTableRender = function (table) {
             data.value = 1;
 
 
-
             this.flip = function(){
 
             };
 
             this.play = function(){
                 console.log('play!'+index);
-                // setCardImage(card, data.type, data.value);
+                setCardImage(card, data.type, data.value);
                 //"rotate("+(data.rotation) +", "+data.x+ ", "+ data.y+")"
                 // data.el.setAttribute("transform",  + ' translate('+(-1*x)+','+(-1*y)+' )');
                 $(animation).get(0).beginElement();
             }
 
-            // var card = getDorsoImage({x:data.x, y:data.y});
-            var card = getCircle(H+data.x, K-data.y, 20);
-            var $rot = index-1;
+            var card = getDorsoImage({x:H+data.x, y:K-data.y});
+            // var card = getCircle(H+data.x, K-data.y, 20);
+            var $rot = data.num-1;
             $(card).addClass('selectable');
             // Important! Align
             //+  '
@@ -91,7 +91,7 @@ trucoTableRender = function (table) {
             // card.setAttribute('transform',  ' translate('+ (x)+','+y+')');
 
             var animation = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
-            animation.setAttribute('dur', '3s');
+            animation.setAttribute('dur', '1s');
             animation.setAttribute('begin', 'click');
             animation.setAttribute('repeatCount', '1');
             animation.setAttribute('fill', 'freeze');
@@ -106,11 +106,11 @@ trucoTableRender = function (table) {
             container.append(card);
             console.log('data', data);
             //' translate('+H+','+K+')  '
-            var translate  = 'translate('+(radious)+','+0+') '
-            var rotate = ' rotate('+0+ ',' + ((H+data.x))+',' + ((K+data.y))+  ')';
+            var translate  = 'translate('+(radious*-1)+','+0+') '
+            var rotate = ' rotate('+(data.rot+$rot*20) + ','+(H+data.x+radious)+ ','+(K-data.y)+')';
             var transform = translate + ' ' + rotate;
-            console.log('rotation', [data.index,rotate]);
-            // card.setAttribute('transform',   translate);
+            console.log('rotation', [data.index,transform]);
+            card.setAttribute('transform',   transform);
 
             card.addEventListener("click", function () {
                 console.log('flip card');
@@ -121,7 +121,7 @@ trucoTableRender = function (table) {
 
 
 
-        this.addCard = function(){
+        this.addCard = function(num){
             // var card = getCardImage('basto', '1', {x:x, y:y});
             console.log('adding card', rotation);
             $this.cards.push(new $this.card({
@@ -131,7 +131,8 @@ trucoTableRender = function (table) {
                 type : null,
                 value: null,
                 flipped : false,
-                index : index
+                index : index,
+                num : num
             }));
 
         };
@@ -171,6 +172,7 @@ trucoTableRender = function (table) {
 
     this.init = function () {
         var size = '6';
+        console.log('init', size);
         var dis = pos[size];
         var colors = ['red', 'blue', 'yellow', 'gray', 'cyan', 'magenta'];
 
@@ -188,18 +190,18 @@ trucoTableRender = function (table) {
 
             cards[i] = new cardManager(i, circle, point1.x, point1.y, rotation);
             cards[i].addCard(0, {});
-            // cards[i].addCard(1, {});
-            // cards[i].addCard(2, {});
+            cards[i].addCard(1, {});
+            cards[i].addCard(2, {});
 
             // User Path
             var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('id', 'path_'+i);
-            var d = 'M ' +'0 , 0'+ ' L ' + (point2.x-point1.x) + ' ' + (point2.y + point1.y);
+            var d = 'M ' +'0 , 0'+ ' L ' + (point2.x-point1.x-100) + ' ' + (point2.y + point1.y);
             console.log('d', d);
             path.setAttributeNS(null, "d", d);
             // // newLine.setAttribute('c', );
-            path.setAttribute('stroke-width', '1');
-            path.setAttribute('stroke', 'cyan');
+            path.setAttribute('stroke-width', '0');
+            path.setAttribute('stroke', 'transparent');
             // path.setAttribute('transform',  ' translate('+H+','+K+')');
             $(container).append(path);
         }

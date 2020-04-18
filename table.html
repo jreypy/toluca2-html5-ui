@@ -1,0 +1,66 @@
+<html>
+<body>
+
+<script src="js/jquery.js"></script>
+<script src="js/toluca.js"></script>
+<script src="js/table.js"></script>
+<link href="css/toluca.css" rel="stylesheet" id="toluca-css">
+<!------ Include the above in your HEAD tag ---------->
+<script>
+    $(function () {
+
+        var getRoom = function (el) {
+            return $(el).attr('roomId');
+        };
+
+        var getTable = function (el) {
+            return $(el).attr('tableId');
+        };
+
+        var foreach = function (items, callback) {
+            for (var i in items) {
+                callback(items[i], i);
+            }
+        };
+
+
+
+        new trucoTableRender({});
+
+        //var toluca = new TolucaClient(render);
+    });
+</script>
+
+<div class="wrapper">
+
+    <div class="container container-table">
+        <h2 class="table-title">Table</h2>
+        <div style="border: 1px solid green">
+            <!--<svg id="table-screen" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"-->
+                 <!--width="800" height="600" color="green">-->
+
+                <!--<path  d="M 0,0 M 300,300"></path>-->
+                <!--<path id="wire" fill="none" stroke="red"-->
+                      <!--d="M 10,10-->
+           <!--L 90,90-->
+           <!--" />-->
+                <!--<circle cx="200" cy="200" r="8" fill="#529fd9"-->
+                <!--&gt;-->
+                    <!--<animateMotion dur="1.6s" repeatCount="indefinite">-->
+                        <!--<mpath xlink:href="#wire"></mpath>-->
+                    <!--</animateMotion>-->
+                <!--</circle>-->
+            <!--</svg>-->
+            <svg id="table-screen" height="600" width="100%" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                 style="background: green"
+            >
+            </svg>
+        </div>
+        <div class="buttons">
+            <button class="go-to-room">Volver</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

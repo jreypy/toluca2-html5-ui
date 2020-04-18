@@ -1,0 +1,59 @@
+.container {
+    border: 1px solid gray;
+    margin: 50px;
+    padding: 50px;
+    display: block;
+}
+table {
+    border-collapse: collapse;
+
+    width: 100%;
+    border-spacing: 0px;
+    border:none;
+}
+tr{
+}
+th {
+    background: #1e7e34;
+    color: white;
+}
+td, th{
+    padding: 0px;
+    border: 1px solid gray;
+}
+
+button {
+    margin: 4px;
+    padding: 10px;
+    border: 1px solid green;
+    background: #1e7e34;
+    color:white;
+}
+
+.room {
+
+}
+.room .tables{
+    border: 1px solid gray;
+    float: left;
+    width: 60%;
+    margin: 10px;
+}
+.room .players{
+    border: 1px solid gray;
+    float: left;
+    margin: 10px;
+    min-width: 30%;
+}
+.buttons {
+
+}
+.buttons *{
+    float: right;
+}
+
+/*Table*/
+.selectable {
+    cursor: pointer;
+
+}

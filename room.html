@@ -1,0 +1,199 @@
+<html>
+<body>
+
+<script src="js/jquery.js"></script>
+<script src="js/toluca.js"></script>
+<link href="css/toluca.css" rel="stylesheet" id="toluca-css">
+<!------ Include the above in your HEAD tag ---------->
+<script>
+    $(function () {
+
+        var getRoom = function(el){
+            return $(el).attr('roomId');
+        };
+
+        var getTable = function(el){
+            return $(el).attr('tableId');
+        };
+
+        var foreach  = function(items, callback){
+            for (var i in items){
+                callback(items[i], i);
+            }
+        };
+
+        var trucoTableRender = function(table){
+            console.log('render table', table);
+
+            if (table.status == 'NEW'){
+                // Render Table
+            }
+        };
+
+        var render = {
+            updateRooms : function(rooms){
+                $('.container').hide();
+                $('.container-rooms').show();
+                $('.rooms').find('.room-item').remove();
+                foreach(rooms, function(room){
+                    console.log('add rooms', room);
+                    var $room = $('<tr class="room-item"><td>'+room.id+'</td><td>'+ room.name+'</td><td><button class="select-room">Seleccionar</button></td></tr>');
+                    $('.select-room',$room).attr('roomId', room.id);
+                    $('.rooms').append($room);
+                });
+            },
+            updateRoom : function(room){
+                console.log('update room', room);
+                render.gotoRoom();
+                $('.container-room').find('.room-title').html(room.name)
+                $('.container-room').find('button').attr('roomId', room.id);
+
+                //add users
+                $('.users').find('.user-item').remove();
+                foreach(room.users, function(roomUser){
+                    render.addRoomUser(roomUser);
+                });
+                //add tables
+                $('.tables-tbl').find('.table-item').remove();
+                foreach(room.tables, function(table){
+                    render.createTable(table);
+                });
+            },
+            gotoRooms : function(){
+                $('.container').hide();
+                $('.container-room').show();
+            },
+            gotoRoom : function(){
+                $('.container').hide();
+                $('.container-room').show();
+            },
+            gotoTable : function(table){
+                $('.container').hide();
+                $('.container-table').show();
+            },
+            tableCreated : function(table){
+                render.createTable(table);
+            },
+            createTable : function(table){
+                var $row = $('<tr class="table-item"><td>'+table.id+'</td><td>'+ table.status+'</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td><button class="select-table-btn">Seleccionar</button></td><</tr>');
+                $('.tables-tbl').append($row);
+                $('.select-table-btn',$row).attr('tableId', table.id);
+                $('.select-table-btn',$row).attr('roomId', table.roomId);
+            },
+            roomUserJoined : function(user){
+                render.addRoomUser({user: user});
+            },
+            addRoomUser : function(roomUser){
+                var $row = $('<tr class="user-item"><td>'+roomUser.user.id+'</td><td>'+ roomUser.user.username+'</td></tr>');
+                $('.users').append($row);
+            },
+            roomTableUserJoined : function(data){
+                render.gotoTable();
+                new trucoTableRender(data.table);
+            }
+        };
+
+
+        // Rooms
+        $('.rooms').on('click','.select-room',function(){
+            var roomId = getRoom(this);
+            toluca.joinRoom(roomId);
+
+        });
+        $('.go-to-rooms').click(function(){
+            toluca.getRooms();
+        });
+        $('.go-to-room').click(function(){
+            render.gotoRoom();
+        });
+
+        // Room
+
+        $('.create-table-btn').click(function(){
+            var roomId = getRoom(this);
+            console.log('create table', roomId);
+            toluca.createTable(roomId);
+        });
+
+        $('.container-room').on('click','.select-table-btn',function(){
+
+            var roomId = getRoom(this);
+            var tableId = getTable(this);
+
+            toluca.joinRoomTable(roomId, tableId);
+
+        });
+
+
+
+
+
+        var toluca = new TolucaClient(render);
+    });
+</script>
+
+<div class="wrapper">
+    <div class="container container-rooms">
+        <h2>Rooms</h2>
+        <table class="rooms">
+            <tr >
+                <th>Id</th>
+                <th>Name</th>
+                <th>Accion</th>
+            </tr>
+        </table>
+    </div>
+    <div class="container container-room">
+        <h2 class="room-title"></h2>
+        <div class="room">
+            <div class="tables">
+                <table class="tables-tbl">
+                    <tr>
+                        <th colspan="9">Mesas</th>
+                    </tr>
+                    <tr>
+                        <th>Mesa Id</th>
+                        <th>Estado</th>
+                        <th>Silla 1</th>
+                        <th>Silla 2</th>
+                        <th>Silla 3</th>
+                        <th>Silla 4</th>
+                        <th>Silla 5</th>
+                        <th>Silla 6</th>
+                        <th>Acciones</th>
+                    </tr>
+                </table>
+            </div>
+            <div class="players">
+                <table class="users">
+                    <tr>
+                        <th colspan="2">Jugadores</th>
+                    </tr>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Rating</th>
+                    </tr>
+                </table>
+            </div>
+            <div style="clear: both"></div>
+        </div>
+        <div class="buttons">
+            <button class="create-table-btn">Crear Mesa</button>
+            <button class="go-to-rooms">Volver</button>
+        </div>
+
+    </div>
+    <div class="container container-table">
+        <h2 class="table-title">Table</h2>
+        <div>
+            <svg fill="green" id="cont" height="1000" width="1000" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+            </svg>
+        </div>
+        <div class="buttons">
+            <button class="go-to-room">Volver</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

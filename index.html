@@ -1,0 +1,33 @@
+<html>
+    <body>
+
+    <script src="js/jquery.js"></script>
+    <link href="css/toluca.css" rel="stylesheet" id="toluca-css">
+    <!------ Include the above in your HEAD tag ---------->
+    <script>
+        $(function(){
+           $('form').submit(function(event){
+               event.preventDefault();
+               window.location = 'room.html';
+           });
+        });
+    </script>
+    <div class="wrapper">
+        <div id="formContent">
+            <!-- Tabs Titles -->
+
+            <!-- Icon -->
+
+            <!-- Login Form -->
+            <form >
+                <h4>Toluca2</h4>
+                <input type="text" id="login" class=" second" name="login" placeholder="Usuario">
+                <input type="text" id="password" class=" third" name="login" placeholder="Clave">
+                <input type="submit" id="lo"class="fourth" value="Ingresar">
+            </form>
+
+            <!-- Remind Passowrd -->
+        </div>
+    </div>
+    </body>
+</html>

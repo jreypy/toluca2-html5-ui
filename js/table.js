@@ -9,14 +9,14 @@ trucoTableRender = function (table) {
     var radious = 40;
 
     var H = 400;
-    var K = 250;
+    var K = 300;
 
 
 
     var getCircle = function(x, y, r, color ){
         var circle = document.createElementNS(svgns, 'circle');
-        circle.setAttributeNS(null, 'cx', H + x);
-        circle.setAttributeNS(null, 'cy', K + y);
+        circle.setAttributeNS(null, 'cx', x);
+        circle.setAttributeNS(null, 'cy', y);
         circle.setAttributeNS(null, 'r', r);
         circle.setAttributeNS(null, 'fill', color);
         //circle.setAttribute('transform',  ' translate(400,250)');
@@ -27,11 +27,11 @@ trucoTableRender = function (table) {
         // svgimg.setAttributeNS(null,'height','200');
         // svgimg.setAttributeNS(null,'width','200');
         svgimg.setAttributeNS('http://www.w3.org/1999/xlink','href', imageName);
-        svgimg.setAttributeNS(null,'x',H+point.x+ '');
-        svgimg.setAttributeNS(null,'y',K+point.y + '');
+        svgimg.setAttributeNS(null,'x', H+point.x);
+        svgimg.setAttributeNS(null,'y', K-point.y);
         //svgimg.setAttribute('transform',  ' translate('+point.x+','+point.y+')');
         // svgimg.setAttributeNS(null,'height','100');
-        // svgimg.setAttribute('transform',  ' translate(400,250)');
+        // svgimg.setAttribute('transform',  ' translate('+H+','+K+')');
         svgimg.setAttributeNS(null, 'visibility', 'visible');
         $('svg').append(svgimg);
         return svgimg;
@@ -79,8 +79,8 @@ trucoTableRender = function (table) {
                 $(animation).get(0).beginElement();
             }
 
-            var card = getDorsoImage({x:0, y:0});
-            // var card = getCircle(x, y, 20);
+            // var card = getDorsoImage({x:data.x, y:data.y});
+            var card = getCircle(H+data.x, K-data.y, 20);
             var $rot = index-1;
             $(card).addClass('selectable');
             // Important! Align
@@ -92,7 +92,7 @@ trucoTableRender = function (table) {
 
             var animation = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
             animation.setAttribute('dur', '3s');
-            animation.setAttribute('begin', 'indefinite');
+            animation.setAttribute('begin', 'click');
             animation.setAttribute('repeatCount', '1');
             animation.setAttribute('fill', 'freeze');
 
@@ -104,8 +104,13 @@ trucoTableRender = function (table) {
             animation.appendChild(mpath);
             card.appendChild(animation);
             container.append(card);
-            console.log('rotation', data);
-            // card.setAttribute('transform',  ' translate('+x+','+ y + ') ');
+            console.log('data', data);
+            //' translate('+H+','+K+')  '
+            var translate  = 'translate('+(radious)+','+0+') '
+            var rotate = ' rotate('+0+ ',' + ((H+data.x))+',' + ((K+data.y))+  ')';
+            var transform = translate + ' ' + rotate;
+            console.log('rotation', [data.index,rotate]);
+            // card.setAttribute('transform',   translate);
 
             card.addEventListener("click", function () {
                 console.log('flip card');
@@ -116,7 +121,7 @@ trucoTableRender = function (table) {
 
 
 
-        this.addCard = function(index){
+        this.addCard = function(){
             // var card = getCardImage('basto', '1', {x:x, y:y});
             console.log('adding card', rotation);
             $this.cards.push(new $this.card({
@@ -167,7 +172,7 @@ trucoTableRender = function (table) {
     this.init = function () {
         var size = '6';
         var dis = pos[size];
-        var colors = ['red', 'blue', 'yellow', 'cyan', 'cyan', 'magenta'];
+        var colors = ['red', 'blue', 'yellow', 'gray', 'cyan', 'magenta'];
 
         var cards = [];
 
@@ -177,9 +182,8 @@ trucoTableRender = function (table) {
 
             var rotation = dis[i][2];
 
-
             // User Circle
-            var circle = getCircle(point1.x, point1.y, radious, colors[i]);
+            var circle = getCircle(H + point1.x, K - point1.y, radious, colors[i]);
             container.appendChild(circle);
 
             cards[i] = new cardManager(i, circle, point1.x, point1.y, rotation);
@@ -190,11 +194,13 @@ trucoTableRender = function (table) {
             // User Path
             var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('id', 'path_'+i);
-            path.setAttributeNS(null, "d", 'M' + point1.x + ',' + point1.y +' L ' + H/2 + ',' + K/2);
-            // newLine.setAttribute('c', );
+            var d = 'M ' +'0 , 0'+ ' L ' + (point2.x-point1.x) + ' ' + (point2.y + point1.y);
+            console.log('d', d);
+            path.setAttributeNS(null, "d", d);
+            // // newLine.setAttribute('c', );
             path.setAttribute('stroke-width', '1');
             path.setAttribute('stroke', 'cyan');
-            path.setAttribute('transform',  ' translate(400,250)');
+            // path.setAttribute('transform',  ' translate('+H+','+K+')');
             $(container).append(path);
         }
         // paths

@@ -17,6 +17,12 @@ trucoTableRender = function (context, toluca) {
 
 
 
+    var getG = function(){
+        var g = document.createElementNS(svgns, 'g');
+        //circle.setAttribute('transform',  ' translate(400,250)');
+        return g;
+    };
+
     var getCircle = function(x, y, r, color ){
         var circle = document.createElementNS(svgns, 'circle');
         circle.setAttributeNS(null, 'cx', x);
@@ -52,32 +58,9 @@ trucoTableRender = function (context, toluca) {
         svgimg.setAttributeNS('http://www.w3.org/1999/xlink','href', 'images/cards/'+type + '/' + value + '.gif');
     };
 
-    var PlayerManager = function(index, circle){
-        var $this = this;
-        $(circle).click(function () {
-            // unselect / select
-            circle.setAttributeNS(null, 'fill', 'gray');
-            if (table.status == 'NEW'){
-                toluca.setTablePosition(table.roomId, context.table.id, index);
-            }else{
-                console.log('position no selected', [index, context.table]);
-            }
-        });
-        this.setPlayer = function(player, fire){
-            $this.player = player;
-            if (player == null){
-                circle.setAttributeNS(null, 'fill', 'gray');
-            }
-            else if (fire){
-                circle.setAttributeNS(null, 'fill', 'red');
-            }else{
-                circle.setAttributeNS(null, 'fill', 'blue');
-            }
 
-        };
-    }
 
-    var cardManager = function (index, circle, x, y, rotation) {
+    var CardsManager = function (index, circle, x, y, rotation) {
         var $this = this;
         this.cards = [];
         this.rotation = rotation;
@@ -166,7 +149,46 @@ trucoTableRender = function (context, toluca) {
 
 
 
-    }
+    };
+
+    var PlayerManager = function(index, point, circle, rotation){
+        var $this = this;
+
+
+
+
+        $(circle).click(function () {
+            // unselect / select
+            circle.setAttributeNS(null, 'fill', 'gray');
+            if (table.status == 'NEW'){
+                toluca.setTablePosition(table.roomId, context.table.id, index);
+            }else{
+                console.log('position no selected', [index, context.table]);
+            }
+        });
+
+
+        this.setPlayer = function(player, fire){
+            $this.player = player;
+            if (player == null){
+                circle.setAttributeNS(null, 'fill', 'gray');
+            }
+            else if (fire){
+                circle.setAttributeNS(null, 'fill', 'red');
+            }else{
+                circle.setAttributeNS(null, 'fill', 'blue');
+            }
+
+        };
+
+        var cardsManager = new CardsManager(index, {}, point.x, point.y, rotation);
+        cardsManager.addCard(0, {});
+        cardsManager.addCard(1, {});
+        cardsManager.addCard(2, {});
+
+
+
+    };
 
 
 
@@ -202,6 +224,8 @@ trucoTableRender = function (context, toluca) {
 
         var dis = pos[size];
 
+        var cards = [];
+
         for (var i in dis) {
             var point1 = {x: dis[i][0], y: dis[i][1]};
             var point2 = {x: 0, y: 0};
@@ -211,12 +235,9 @@ trucoTableRender = function (context, toluca) {
             $(circle).addClass('selectable');
             container.appendChild(circle);
 
-            $this.players[i] = new PlayerManager(i, circle);
+            $this.players[i] = new PlayerManager(i, point1, circle, dis[i][2]);
 
-            // cards[i] = new cardManager(i, circle, point1.x, point1.y, rotation);
-            // cards[i].addCard(0, {});
-            // cards[i].addCard(1, {});
-            // cards[i].addCard(2, {});
+
 
             // User Path
             var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');

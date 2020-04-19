@@ -195,13 +195,20 @@ trucoTableRender = function (context, toluca) {
 
         this.setPlayer = function (player, fire) {
             $this.player = player;
+            $(g).find('text').remove();
             if (player == null) {
                 circle.setAttributeNS(null, 'fill', 'gray');
+                var text = addText('Player '+ (index+1));
+                g.appendChild(text);
             }
             else if (fire) {
                 circle.setAttributeNS(null, 'fill', 'red');
+                var text = addText(player.username);
+                g.appendChild(text);
             } else {
                 circle.setAttributeNS(null, 'fill', 'blue');
+                var text = addText(player.username);
+                g.appendChild(text);
             }
 
         };
@@ -216,7 +223,8 @@ trucoTableRender = function (context, toluca) {
         g.appendChild(circle);
         g.appendChild(text);
         container.appendChild(g);
-        return g;
+
+        return this;
 
     };
 
@@ -260,8 +268,7 @@ trucoTableRender = function (context, toluca) {
 
 
 
-            var player = $this.players[i] = new PlayerManager(i, point1, dis[i][2]);
-            players[i] = player;
+            $this.players[i] = new PlayerManager(i, point1, dis[i][2]);
 
             // User Path
             var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');

@@ -49,6 +49,7 @@ trucoTableRender = function (context, toluca) {
         var element = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         element.setAttributeNS(null, 'x', 1);
         element.setAttributeNS(null, 'y', RADIO);
+        element.setAttributeNS(null, 'fill', 'yellow');
         // element.setAttributeNS(null, 'dominant-baseline', 'middle');
         // element.setAttributeNS(null, 'text-anchor', 'middle');
         var txt = document.createTextNode(text);
@@ -56,11 +57,11 @@ trucoTableRender = function (context, toluca) {
         return element;
     };
 
-    var getButton = function (x, y, text) {
-        var rect = getRect(0, 0, 200, 50, 'blue');
+    var getButton = function (index, text) {
+        var rect = getRect(0, 0, 100, 50, 'blue');
         var g = getG();
-        var txt = addText('Iniciar');
-        txt.setAttributeNS(null, 'x', 100);
+        var txt = addText(text);
+        txt.setAttributeNS(null, 'x', 50);
         txt.setAttributeNS(null, 'y', 25);
         txt.setAttributeNS(null, 'text-anchor', 'middle');
         txt.setAttributeNS(null, 'dominant-baseline', 'middle');
@@ -74,12 +75,20 @@ trucoTableRender = function (context, toluca) {
         g.appendChild(txt);
 
         $(rect).addClass('selectable');
+        $(g).addClass('selectable');
+
+
+
+        var translate = 'translate(' + (index*110+10) + ',0)'
+        g.setAttribute('transform', translate)
+
         $('#buttons').get(0).appendChild(g);
 
 
-        rect.addEventListener("click", function () {
+        g.addEventListener("click", function () {
             alert('Click Button!');
         });
+
 
 
     };
@@ -321,7 +330,8 @@ trucoTableRender = function (context, toluca) {
         // text.setAttributeNS(null, 'ry',10);
 
 
-        getButton(10, 10, 'Iniciar')
+        getButton(0, 'Iniciar');
+        getButton(1, 'Cancelar');
 
         for (var i = 0; i < dis.length; i++) {
 

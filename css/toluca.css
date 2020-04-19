@@ -53,7 +53,7 @@ button {
 }
 
 /*Table*/
-.selectable {
-    cursor: pointer;
+.selectable, .selectable * {
+    cursor: pointer !important;
 
 }

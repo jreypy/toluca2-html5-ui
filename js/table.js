@@ -22,25 +22,67 @@ trucoTableRender = function (context, toluca) {
 
     var getG = function () {
         var g = document.createElementNS(svgns, 'g');
-        g.setAttributeNS(null, 'width', radious*2);
-        g.setAttributeNS(null, 'height', radious*2);
+        g.setAttributeNS(null, 'width', radious * 2);
+        g.setAttributeNS(null, 'height', radious * 2);
         // width="200" height="100"
         //circle.setAttribute('transform',  ' translate(400,250)');
         return g;
     };
 
 
-    var addText = function(text){
+    var getRect = function (x, y, w, h, color) {
+
+        var element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
+        element.setAttributeNS(null, 'x', x);
+        element.setAttributeNS(null, 'y', y);
+        element.setAttributeNS(null, 'width', w);
+        element.setAttributeNS(null, 'height', h);
+        element.setAttributeNS(null, 'rx', 15);
+        element.setAttributeNS(null, 'ry', 15);
+        element.setAttributeNS(null, 'fill', color);
+
+
+        return element;
+    }
+    var addText = function (text) {
         var element = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         element.setAttributeNS(null, 'x', 1);
         element.setAttributeNS(null, 'y', RADIO);
         // element.setAttributeNS(null, 'dominant-baseline', 'middle');
         // element.setAttributeNS(null, 'text-anchor', 'middle');
         var txt = document.createTextNode(text);
-
         element.appendChild(txt);
         return element;
-    }
+    };
+
+    var getButton = function (x, y, text) {
+        var rect = getRect(0, 0, 200, 50, 'blue');
+        var g = getG();
+        var txt = addText('Iniciar');
+        txt.setAttributeNS(null, 'x', 100);
+        txt.setAttributeNS(null, 'y', 25);
+        txt.setAttributeNS(null, 'text-anchor', 'middle');
+        txt.setAttributeNS(null, 'dominant-baseline', 'middle');
+
+
+        g.setAttributeNS(null, 'width', 200);
+        g.setAttributeNS(null, 'height', 50);
+
+
+        g.appendChild(rect);
+        g.appendChild(txt);
+
+        $(rect).addClass('selectable');
+        $('#buttons').get(0).appendChild(g);
+
+
+        rect.addEventListener("click", function () {
+            alert('Click Button!');
+        });
+
+
+    };
 
     var getCircle = function (x, y, r, color) {
         var circle = document.createElementNS(svgns, 'circle');
@@ -174,12 +216,11 @@ trucoTableRender = function (context, toluca) {
 
         var g = getG();
 
-        var text = addText('Player '+ (index+1));
+        var text = addText('Player ' + (index + 1));
 
 
         var translate = 'translate(' + (H + point.x - radious) + ',' + (K - point.y - radious) + ') '
         g.setAttribute('transform', translate)
-
 
 
         $(circle).click(function () {
@@ -198,7 +239,7 @@ trucoTableRender = function (context, toluca) {
             $(g).find('text').remove();
             if (player == null) {
                 circle.setAttributeNS(null, 'fill', 'gray');
-                var text = addText('Player '+ (index+1));
+                var text = addText('Player ' + (index + 1));
                 g.appendChild(text);
             }
             else if (fire) {
@@ -261,11 +302,31 @@ trucoTableRender = function (context, toluca) {
 
         var players = [];
 
-        for (var i =0; i<dis.length; i++) {
+
+        /*
+                    <rect x="10" y="10"
+                          width="200" height="50"
+                          rx="15" ry="15" fill="gray">
+                    </rect>
+                    <text x="20" y="50">INICIAR</text>
+                </g>*/
+
+        // var text = addText('Iniciar');
+        // text.setAttributeNS(null, 'x',10);
+        // text.setAttributeNS(null, 'y',10);
+        // text.setAttributeNS(null, 'width',200);
+        // text.setAttributeNS(null, 'height',50);
+        // text.setAttributeNS(null, 'rx',10);
+        // text.setAttributeNS(null, 'ry',10);
+        // text.setAttributeNS(null, 'ry',10);
+
+
+        getButton(10, 10, 'Iniciar')
+
+        for (var i = 0; i < dis.length; i++) {
 
             var point1 = {x: dis[i][0], y: dis[i][1]};
             var point2 = {x: 0, y: 0};
-
 
 
             $this.players[i] = new PlayerManager(i, point1, dis[i][2]);

@@ -220,19 +220,24 @@ trucoTableRender = function (context, toluca) {
     var PlayerManager = function (index, point, rotation) {
         var $this = this;
 
-        var circle = getCircle(radious, radious, radious, 'white');
-        $(circle).addClass('selectable');
+        var circle = getCircle(radious, radious, radious, 'gray');
+
 
         var g = getG();
 
         var text = addText('Player ' + (index + 1));
+        text.setAttributeNS(null, 'x', radious);
+        text.setAttributeNS(null, 'y', radious);
+        text.setAttributeNS(null, 'text-anchor', 'middle');
+        text.setAttributeNS(null, 'dominant-baseline', 'middle');
 
 
         var translate = 'translate(' + (H + point.x - radious) + ',' + (K - point.y - radious) + ') '
         g.setAttribute('transform', translate)
 
 
-        $(circle).click(function () {
+        $(g).addClass('selectable');
+        $(g).click(function () {
             // unselect / select
             circle.setAttributeNS(null, 'fill', 'gray');
             if (table.status == 'NEW') {
@@ -245,20 +250,26 @@ trucoTableRender = function (context, toluca) {
 
         this.setPlayer = function (player, fire) {
             $this.player = player;
-            $(g).find('text').remove();
+            // $(g).find('text').remove();
+
             if (player == null) {
                 circle.setAttributeNS(null, 'fill', 'gray');
-                var text = addText('Player ' + (index + 1));
-                g.appendChild(text);
+                // var text = addText('Player ' + (index + 1));
+                // text.innerText = 'Player '+ (index+1);
+                $(text).html('Player '+ (index+1));
+                // g.appendChild(text);
             }
             else if (fire) {
                 circle.setAttributeNS(null, 'fill', 'red');
-                var text = addText(player.username);
-                g.appendChild(text);
+                // var text = addText(player.username);
+                $(text).html(player.username);
+                // g.appendChild(text);
             } else {
                 circle.setAttributeNS(null, 'fill', 'blue');
-                var text = addText(player.username);
-                g.appendChild(text);
+                // var text = addText(player.username);
+                // text.innerText = player.username;
+                $(text).html(player.username);
+                // g.appendChild(text);
             }
 
         };

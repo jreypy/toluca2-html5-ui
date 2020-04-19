@@ -3,11 +3,14 @@ var efectoFinalizado = function(index, event){
     console.log(event);
 };
 
-trucoTableRender = function (table) {
-    console.log('render table', table);
+trucoTableRender = function (context, toluca) {
+    console.log('creating trucoTableRender', [context, toluca]);
+    var $this = this;
+    console.log('render table', context.table);
     var svgns = "http://www.w3.org/2000/svg";
     var container = document.getElementById('table-screen');
     var radious = 40;
+    var table = context.table;
 
     var H = 400;
     var K = 300;
@@ -49,6 +52,30 @@ trucoTableRender = function (table) {
         svgimg.setAttributeNS('http://www.w3.org/1999/xlink','href', 'images/cards/'+type + '/' + value + '.gif');
     };
 
+    var PlayerManager = function(index, circle){
+        var $this = this;
+        $(circle).click(function () {
+            // unselect / select
+            circle.setAttributeNS(null, 'fill', 'gray');
+            if (table.status == 'NEW'){
+                toluca.setTablePosition(table.roomId, context.table.id, index);
+            }else{
+                console.log('position no selected', [index, context.table]);
+            }
+        });
+        this.setPlayer = function(player, fire){
+            $this.player = player;
+            if (player == null){
+                circle.setAttributeNS(null, 'fill', 'gray');
+            }
+            else if (fire){
+                circle.setAttributeNS(null, 'fill', 'red');
+            }else{
+                circle.setAttributeNS(null, 'fill', 'blue');
+            }
+
+        };
+    }
 
     var cardManager = function (index, circle, x, y, rotation) {
         var $this = this;
@@ -72,7 +99,7 @@ trucoTableRender = function (table) {
             };
 
             this.play = function(){
-                console.log('play!'+index);
+                // console.log('play!'+index);
                 setCardImage(card, data.type, data.value);
                 //"rotate("+(data.rotation) +", "+data.x+ ", "+ data.y+")"
                 // data.el.setAttribute("transform",  + ' translate('+(-1*x)+','+(-1*y)+' )');
@@ -104,12 +131,12 @@ trucoTableRender = function (table) {
             animation.appendChild(mpath);
             card.appendChild(animation);
             container.append(card);
-            console.log('data', data);
+            // console.log('data', data);
             //' translate('+H+','+K+')  '
             var translate  = 'translate('+(radious*-1)+','+0+') '
             var rotate = ' rotate('+(data.rot+$rot*20) + ','+(H+data.x+radious)+ ','+(K-data.y)+')';
             var transform = translate + ' ' + rotate;
-            console.log('rotation', [data.index,transform]);
+            // console.log('rotation', [data.index,transform]);
             card.setAttribute('transform',   transform);
 
             card.addEventListener("click", function () {
@@ -123,7 +150,6 @@ trucoTableRender = function (table) {
 
         this.addCard = function(num){
             // var card = getCardImage('basto', '1', {x:x, y:y});
-            console.log('adding card', rotation);
             $this.cards.push(new $this.card({
                 x : x,
                 y : y,
@@ -142,26 +168,7 @@ trucoTableRender = function (table) {
 
     }
 
-    var pos = {
-        '2': [
-            [0, -240],
-            [0, 240],
-        ],
-        '4': [
-            [0, -200],
-            [200, 0],
-            [0, 200],
-            [-200, 0]
-        ],
-        '6': [
-            [0, -250, 180],
-            [340, -150, 180-65],
-            [340, 150, 65],
-            [0, 250, 0],
-            [-340, 150, -65],
-            [-340, -150, -115]
-        ]
-    };
+
 
 
 
@@ -170,34 +177,52 @@ trucoTableRender = function (table) {
     }
 
 
-    this.init = function () {
-        var size = '6';
-        console.log('init', size);
-        var dis = pos[size];
-        var colors = ['red', 'blue', 'yellow', 'gray', 'cyan', 'magenta'];
+    this.render = function (size) {
 
-        var cards = [];
+        var pos = {
+            '2': [
+                [0, -240],
+                [0, 240],
+            ],
+            '4': [
+                [0, -200],
+                [200, 0],
+                [0, 200],
+                [-200, 0]
+            ],
+            '6': [
+                [0, -250, 180],
+                [340, -150, 180-65],
+                [340, 150, 65],
+                [0, 250, 0],
+                [-340, 150, -65],
+                [-340, -150, -115]
+            ]
+        };
+
+        var dis = pos[size];
 
         for (var i in dis) {
             var point1 = {x: dis[i][0], y: dis[i][1]};
             var point2 = {x: 0, y: 0};
 
-            var rotation = dis[i][2];
 
-            // User Circle
-            var circle = getCircle(H + point1.x, K - point1.y, radious, colors[i]);
+            var circle = getCircle(H + point1.x, K - point1.y, radious, 'white');
+            $(circle).addClass('selectable');
             container.appendChild(circle);
 
-            cards[i] = new cardManager(i, circle, point1.x, point1.y, rotation);
-            cards[i].addCard(0, {});
-            cards[i].addCard(1, {});
-            cards[i].addCard(2, {});
+            $this.players[i] = new PlayerManager(i, circle);
+
+            // cards[i] = new cardManager(i, circle, point1.x, point1.y, rotation);
+            // cards[i].addCard(0, {});
+            // cards[i].addCard(1, {});
+            // cards[i].addCard(2, {});
 
             // User Path
             var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('id', 'path_'+i);
             var d = 'M ' +'0 , 0'+ ' L ' + (point2.x-point1.x-100) + ' ' + (point2.y + point1.y);
-            console.log('d', d);
+            // console.log('d', d);
             path.setAttributeNS(null, "d", d);
             // // newLine.setAttribute('c', );
             path.setAttribute('stroke-width', '0');
@@ -207,6 +232,15 @@ trucoTableRender = function (table) {
         }
         // paths
     };
-    this.init();
+    this.setPlayerPosition = function(params){
+        console.log('setting position ', params);
+        for (var i in params.table.positions){
+
+            $this.players[i].setPlayer(params.table.positions[i], params.index==i);
+        }
+    };
+    this.size = 6;
+    this.players = [];
+    this.render(this.size);
 
 };

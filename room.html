@@ -24,8 +24,24 @@
         };
 
 
+        var tableRendererList = {};
+
+        function getTrucoTableRender(data){
+            var tableRenderer = tableRendererList[data.id];
+            if (tableRenderer == null){
+                console.log('creating table renderer', data.id);
+                var tableRenderer = new trucoTableRender({table:data}, toluca);
+                tableRendererList[data.id]  = {
+                    renderer : tableRenderer,
+                    table : data
+                };
+            }
+            console.log('tablerenderer found ', data.id);
+            return tableRenderer.renderer;
+        }
 
         var render = {
+
             updateRooms : function(rooms){
                 $('.container').hide();
                 $('.container-rooms').show();
@@ -85,12 +101,16 @@
             },
             roomTableUserJoined : function(data){
                 render.gotoTable();
-                console.log('render table....')
-                new trucoTableRender({});
-                // new trucoTableRender({});
+                var renderer = getTrucoTableRender(data.table);
+
+            },
+            tablePositionSetted : function(data){
+                // render.gotoTable();
+                console.log('xxxx');
+                var tableRenderer = getTrucoTableRender(data.table);
+                tableRenderer.setPlayerPosition({player: data.user, index: data.position, table: data.table});
             }
         };
-
 
         // Rooms
         $('.rooms').on('click','.select-room',function(){

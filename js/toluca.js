@@ -49,6 +49,9 @@ function TolucaClient(render){
         else if (obj.type == "TRUCO_ROOM_EVENT"){
             $this.trucoRoomEvent(obj.data);
         }
+        else if (obj.type == "TRUCO_TABLE_EVENT"){
+            $this.trucoTableEvent(obj.data);
+        }
         else{
             console.log('message not implemented', obj);
         }
@@ -73,11 +76,21 @@ function TolucaClient(render){
         }
         else if (data.eventName == 'ROOM_USER_JOINED'){
             $this.roomUserJoined(data.user);
+        }else if (data.eventName == 'TABLE_POSITION_SETTED'){
+            $this.tablePositionSetted({user: data.user, table: data.table});
         }
         else {
             console.log('trucoRoomEvent not implemented', data);
         }
-    }
+    };
+    this.trucoTableEvent = function(data){
+        if (data.eventName == 'TABLE_POSITION_SETTED'){
+            $this.tablePositionSetted(data);
+        }
+        else {
+            console.log('trucoTableEvent not implemented', data);
+        }
+    };
     this.roomsFound = function(rooms){
         render.updateRooms(rooms);
     };
@@ -93,6 +106,17 @@ function TolucaClient(render){
     this.roomTableUserJoined = function(data){
         render.roomTableUserJoined(data);
     };
+    // this.roomTableUserJoined = function(data){
+    //     render.roomTableUserJoined(data);
+    // };
+
+    // Table Events
+    this.tablePositionSetted = function(data){
+        render.tablePositionSetted(data);
+    };
+
+
+
 
     //Commans;
     this.getRooms = function(){
@@ -130,6 +154,19 @@ function TolucaClient(render){
             }
         });
     };
+
+
+    this.setTablePosition = function(roomId, tableId,position){
+        ws.sendMessage({
+            "command":"set_table_position",
+            "data" : {
+                "roomId" : roomId,
+                "tableId" : tableId,
+                "position" : position,
+            }
+        });
+    };
+
 
     ws.connect();
 

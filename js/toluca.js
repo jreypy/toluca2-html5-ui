@@ -53,6 +53,9 @@ function TolucaClient(render){
         else if (obj.type == "TRUCO_TABLE_EVENT"){
             $this.trucoTableEvent(obj.data);
         }
+        else if (obj.type == "TRUCO_GAME_EVENT"){
+            $this.trucoGameEvent(obj.data);
+        }
         else{
             console.log('message not implemented', obj);
         }
@@ -92,6 +95,14 @@ function TolucaClient(render){
             console.log('trucoTableEvent not implemented', data);
         }
     };
+    this.trucoGameEvent = function(data){
+        if (data.eventName == 'GAME_STARTED'){
+            $this.gameStarted(data);
+        }
+        else {
+            console.log('trucoTableEvent not implemented', data);
+        }
+    };
     this.roomsFound = function(rooms){
         render.updateRooms(rooms);
     };
@@ -115,6 +126,10 @@ function TolucaClient(render){
     this.tablePositionSetted = function(data){
         render.tablePositionSetted(data);
     };
+
+    this.gameStarted = function(data){
+        render.gameStarted(data);
+    }
 
 
 

@@ -195,6 +195,8 @@ trucoTableRender = function (context, toluca) {
             // console.log('rotation', [data.index,transform]);
             card.setAttribute('transform', transform);
 
+            $(card).addClass('card');
+
             card.addEventListener("click", function () {
                 console.log('flip card');
                 $this.play();
@@ -221,7 +223,7 @@ trucoTableRender = function (context, toluca) {
 
     };
 
-    var PlayerManager = function (index, point, rotation) {
+    var PlayerManager = function (index, point, rotation, user) {
         var $this = this;
 
         var circle = getCircle(radious, radious, radious);
@@ -235,8 +237,13 @@ trucoTableRender = function (context, toluca) {
         var circle2 = getCircle(radious, radious, radious - 8, 'white');
 
         var g = getG();
+        var playerName = 'Player ' + (index + 1);
 
-        var text = addText('Player ' + (index + 1));
+        if (user != null){
+            playerName = user.username;
+        }
+
+        var text = addText(playerName);
         text.setAttributeNS(null, 'x', radious);
         text.setAttributeNS(null, 'y', radious);
         text.setAttributeNS(null, 'text-anchor', 'middle');
@@ -307,12 +314,13 @@ trucoTableRender = function (context, toluca) {
     }
 
 
-    this.render = function (size) {
-
+    this.render = function (size, users) {
+        $(container).find('.player').remove();
+        $(container).find('.card').remove();
         var pos = {
             '2': [
-                [0, -240],
-                [0, 240],
+                [0, -240, 180],
+                [0, 240, 0],
             ],
             '4': [
                 [0, -200],
@@ -331,7 +339,6 @@ trucoTableRender = function (context, toluca) {
         };
 
         var dis = pos[size];
-
         var players = [];
 
 
@@ -359,7 +366,7 @@ trucoTableRender = function (context, toluca) {
             var point2 = {x: 0, y: 0};
 
 
-            $this.players[i] = new PlayerManager(i, point1, dis[i][2]);
+            $this.players[i] = new PlayerManager(i, point1, dis[i][2], users[i]);
 
             // User Path
             var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -375,16 +382,22 @@ trucoTableRender = function (context, toluca) {
         }
         // paths
     };
-    this.setPlayerPosition = function (params) {
+    this.tablePositionSetted = function (params) {
         console.log('setting position ', params);
         for (var i in params.table.positions) {
 
             $this.players[i].setPlayer(params.table.positions[i], params.index == i);
         }
     };
+    this.gameStarted = function (event) {
+        $this.size = event.game.size;
+        $this.render($this.size, event.game.positions);
+    };
+
+
     this.size = 6;
     this.players = [];
-    this.render(this.size);
+    this.render(this.size, [null,null, null,null, null,null]);
 
 
     this.setupButtons = function () {

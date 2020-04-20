@@ -146,17 +146,18 @@ trucoTableRender = function (context, toluca) {
         this.card = function (data) {
             var $this = this;
             $this.data = data;
-            data.type = 'basto';
-            data.value = 1;
+            data.type = data.type;
+            data.value = data.value;
+            data.flipped = data.flipped;
 
 
             this.flip = function () {
-
+                if (data.flipped)
+                    setCardImage(card, data.type, data.value);
             };
 
             this.play = function () {
                 // console.log('play!'+index);
-                setCardImage(card, data.type, data.value);
                 //"rotate("+(data.rotation) +", "+data.x+ ", "+ data.y+")"
                 // data.el.setAttribute("transform",  + ' translate('+(-1*x)+','+(-1*y)+' )');
                 $(animation).get(0).beginElement();
@@ -202,18 +203,20 @@ trucoTableRender = function (context, toluca) {
                 $this.play();
             });
 
+            this.flip();
+
         };
 
 
-        this.addCard = function (num) {
+        this.addCard = function (num, type, value, flipped) {
             // var card = getCardImage('basto', '1', {x:x, y:y});
             $this.cards.push(new $this.card({
                 x: x,
                 y: y,
                 rot: rotation,
-                type: null,
-                value: null,
-                flipped: false,
+                type: type,
+                value: value,
+                flipped: flipped,
                 index: index,
                 num: num
             }));
@@ -225,6 +228,7 @@ trucoTableRender = function (context, toluca) {
 
     var PlayerManager = function (index, point, rotation, user) {
         var $this = this;
+        this.user = user;
 
         var circle = getCircle(radious, radious, radious);
         $(circle).addClass('free');
@@ -239,11 +243,8 @@ trucoTableRender = function (context, toluca) {
         var g = getG();
         var playerName = 'Player ' + (index + 1);
 
-        if (user != null){
-            playerName = user.username;
-        }
-
         var text = addText(playerName);
+
         text.setAttributeNS(null, 'x', radious);
         text.setAttributeNS(null, 'y', radious);
         text.setAttributeNS(null, 'text-anchor', 'middle');
@@ -290,11 +291,18 @@ trucoTableRender = function (context, toluca) {
 
         };
 
+        this.receivingCards = function(user, cards){
+            for (var i in cards){
+                if (user.id == PRINCIPAL.id){
+                    cardsManager.addCard(i, cards[i].type, cards[i].value, true);
+                }
+            }
+            container.appendChild(g);
+        };
+
         var cardsManager = new CardsManager(index, {}, point.x, point.y, rotation);
 
-        cardsManager.addCard(0, {});
-        cardsManager.addCard(1, {});
-        cardsManager.addCard(2, {});
+
 
 
         g.appendChild(circle);
@@ -303,6 +311,10 @@ trucoTableRender = function (context, toluca) {
 
         $(g).addClass('player');
         container.appendChild(g);
+
+        if (user != null){
+            $(text).html(user.username);
+        }
 
         return this;
 
@@ -359,7 +371,7 @@ trucoTableRender = function (context, toluca) {
         // text.setAttributeNS(null, 'ry',10);
         // text.setAttributeNS(null, 'ry',10);
 
-
+        $this.players = [];
         for (var i = 0; i < dis.length; i++) {
 
             var point1 = {x: dis[i][0], y: dis[i][1]};
@@ -393,7 +405,15 @@ trucoTableRender = function (context, toluca) {
         $this.size = event.game.size;
         $this.render($this.size, event.game.positions);
     };
-
+    this.receivingCards = function (event) {
+        if (event.player.id == PRINCIPAL.id){
+            for (i in $this.players){
+                if ($this.players[i].user.id == PRINCIPAL.id){
+                    $this.players[i].receivingCards(event.player, event.cards);
+                }
+            }
+        }
+    };
 
     this.size = 6;
     this.players = [];

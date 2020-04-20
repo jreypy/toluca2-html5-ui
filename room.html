@@ -116,6 +116,10 @@
             gameStarted : function(event){
                 var tableRenderer = getTrucoTableRender({id: event.tableId});
                 tableRenderer.gameStarted(event);
+            },
+            receivingCards : function(event){
+                var tableRenderer = getTrucoTableRender({id: event.tableId});
+                tableRenderer.receivingCards(event);
             }
         };
 

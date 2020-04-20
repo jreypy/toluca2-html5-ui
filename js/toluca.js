@@ -14,7 +14,7 @@ function TolucaWS(handler){
         console.log('connection=',connection);
 
         connection.onopen = function(event){
-            PRINCIPAL = {username:'amigo'};
+            PRINCIPAL = {username:'amigo', id: 'amigo'};
             console.log('connection opened', event);
             //connection.send(JSON.stringify(obj));
             handler.ready();
@@ -95,12 +95,15 @@ function TolucaClient(render){
             console.log('trucoTableEvent not implemented', data);
         }
     };
-    this.trucoGameEvent = function(data){
-        if (data.eventName == 'GAME_STARTED'){
-            $this.gameStarted(data);
+    this.trucoGameEvent = function(event){
+        if (event.eventName == 'GAME_STARTED'){
+            $this.gameStarted(event);
+        }
+        else if (event.eventName == 'GIVING_CARDS'){
+            $this.receivingCards(event);
         }
         else {
-            console.log('trucoTableEvent not implemented', data);
+            console.log('trucoTableEvent not implemented', event);
         }
     };
     this.roomsFound = function(rooms){
@@ -129,7 +132,12 @@ function TolucaClient(render){
 
     this.gameStarted = function(data){
         render.gameStarted(data);
-    }
+    };
+
+    this.receivingCards = function(event){
+        render.receivingCards(event);
+    };
+
 
 
 

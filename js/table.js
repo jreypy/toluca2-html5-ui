@@ -6,11 +6,14 @@ var efectoFinalizado = function (index, event) {
 trucoTableRender = function (context, toluca) {
     console.log('creating trucoTableRender', [context, toluca]);
     var $this = this;
+
     console.log('render table', context.table);
     var svgns = "http://www.w3.org/2000/svg";
     var container = document.getElementById('table-screen');
 
     var table = context.table;
+    this.showStartButton = table.owner.username == PRINCIPAL.username;
+
 
     var H = 400;
     var K = 300;
@@ -54,6 +57,7 @@ trucoTableRender = function (context, toluca) {
         // element.setAttributeNS(null, 'text-anchor', 'middle');
         var txt = document.createTextNode(text);
         element.appendChild(txt);
+        $(element).addClass('table-text');
         return element;
     };
 
@@ -78,8 +82,7 @@ trucoTableRender = function (context, toluca) {
         $(g).addClass('selectable');
 
 
-
-        var translate = 'translate(' + (index*110+10) + ',0)'
+        var translate = 'translate(' + (index * 110 + 10) + ',0)'
         g.setAttribute('transform', translate)
 
         $('#buttons').get(0).appendChild(g);
@@ -90,7 +93,6 @@ trucoTableRender = function (context, toluca) {
         });
 
 
-
     };
 
     var getCircle = function (x, y, r, color) {
@@ -98,7 +100,9 @@ trucoTableRender = function (context, toluca) {
         circle.setAttributeNS(null, 'cx', x);
         circle.setAttributeNS(null, 'cy', y);
         circle.setAttributeNS(null, 'r', r);
-        circle.setAttributeNS(null, 'fill', color);
+        if (color != null){
+            circle.setAttributeNS(null, 'fill', color);
+        }
         //circle.setAttribute('transform',  ' translate(400,250)');
         return circle;
     };
@@ -220,8 +224,15 @@ trucoTableRender = function (context, toluca) {
     var PlayerManager = function (index, point, rotation) {
         var $this = this;
 
-        var circle = getCircle(radious, radious, radious, 'gray');
+        var circle = getCircle(radious, radious, radious);
+        $(circle).addClass('free');
+        if (index%2==0){
+            $(circle).addClass('team1');
+        }else{
+            $(circle).addClass('team2');
+        }
 
+        var circle2 = getCircle(radious, radious, radious - 8, 'white');
 
         var g = getG();
 
@@ -251,21 +262,19 @@ trucoTableRender = function (context, toluca) {
         this.setPlayer = function (player, fire) {
             $this.player = player;
             // $(g).find('text').remove();
-
+            $(circle).addClass('free');
             if (player == null) {
                 circle.setAttributeNS(null, 'fill', 'gray');
                 // var text = addText('Player ' + (index + 1));
                 // text.innerText = 'Player '+ (index+1);
-                $(text).html('Player '+ (index+1));
+                $(text).html('Libre');
                 // g.appendChild(text);
             }
             else if (fire) {
-                circle.setAttributeNS(null, 'fill', 'red');
                 // var text = addText(player.username);
                 $(text).html(player.username);
                 // g.appendChild(text);
             } else {
-                circle.setAttributeNS(null, 'fill', 'blue');
                 // var text = addText(player.username);
                 // text.innerText = player.username;
                 $(text).html(player.username);
@@ -282,7 +291,10 @@ trucoTableRender = function (context, toluca) {
 
 
         g.appendChild(circle);
+        g.appendChild(circle2);
         g.appendChild(text);
+
+        $(g).addClass('player');
         container.appendChild(g);
 
         return this;
@@ -341,9 +353,6 @@ trucoTableRender = function (context, toluca) {
         // text.setAttributeNS(null, 'ry',10);
 
 
-        getButton(0, 'Iniciar');
-        getButton(1, 'Cancelar');
-
         for (var i = 0; i < dis.length; i++) {
 
             var point1 = {x: dis[i][0], y: dis[i][1]};
@@ -376,5 +385,16 @@ trucoTableRender = function (context, toluca) {
     this.size = 6;
     this.players = [];
     this.render(this.size);
+
+
+    this.setupButtons = function () {
+        var index = 0;
+        if ($this.showStartButton) {
+            getButton(index++, 'Iniciar');
+            getButton(index++, 'Cancelar');
+        }
+        getButton(index++, 'Salir');
+    }
+    this.setupButtons();
 
 };

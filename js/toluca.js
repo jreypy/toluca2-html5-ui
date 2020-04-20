@@ -14,6 +14,7 @@ function TolucaWS(handler){
         console.log('connection=',connection);
 
         connection.onopen = function(event){
+            PRINCIPAL = {username:'amigo'};
             console.log('connection opened', event);
             //connection.send(JSON.stringify(obj));
             handler.ready();

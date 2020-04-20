@@ -57,3 +57,21 @@ button {
     cursor: pointer !important;
 
 }
+
+.player .table-text {
+    font-size: 14 pt;
+    fill: red;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.player .team1{
+    fill: red;
+}
+.player .team2{
+    fill: blue;
+}
+
+.player .free .table-text{
+    fill: gray;
+}

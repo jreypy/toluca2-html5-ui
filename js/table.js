@@ -144,16 +144,16 @@ trucoTableRender = function (context, toluca) {
         };
 
         this.card = function (data) {
+
             var $this = this;
             $this.data = data;
-            data.type = data.type;
-            data.value = data.value;
-            data.flipped = data.flipped;
 
+            console.log('add card', data);
 
             this.flip = function () {
-                if (data.flipped)
+                if (data.flipped) {
                     setCardImage(card, data.type, data.value);
+                }
             };
 
             this.play = function () {
@@ -210,6 +210,8 @@ trucoTableRender = function (context, toluca) {
 
         this.addCard = function (num, type, value, flipped) {
             // var card = getCardImage('basto', '1', {x:x, y:y});
+            console.log('creating card', [num, type, value, flipped]);
+
             $this.cards.push(new $this.card({
                 x: x,
                 y: y,
@@ -291,18 +293,15 @@ trucoTableRender = function (context, toluca) {
 
         };
 
-        this.receivingCards = function(user, cards){
-            for (var i in cards){
-                if (user.id == PRINCIPAL.id){
-                    cardsManager.addCard(i, cards[i].type, cards[i].value, true);
-                }
+        this.receivingCards = function (user, cards) {
+            console.log('playermanger receiving cards', [$this.user.id, cards])
+            for (var i in cards) {
+                cardsManager.addCard(i, cards[i].type, cards[i].value, PRINCIPAL.id == $this.user.id);
             }
             container.appendChild(g);
         };
 
         var cardsManager = new CardsManager(index, {}, point.x, point.y, rotation);
-
-
 
 
         g.appendChild(circle);
@@ -312,7 +311,7 @@ trucoTableRender = function (context, toluca) {
         $(g).addClass('player');
         container.appendChild(g);
 
-        if (user != null){
+        if (user != null) {
             $(text).html(user.username);
         }
 
@@ -329,6 +328,7 @@ trucoTableRender = function (context, toluca) {
     this.render = function (size, users) {
         $(container).find('.player').remove();
         $(container).find('.card').remove();
+        $(container).find('.path').remove();
         var pos = {
             '2': [
                 [0, -240, 180],
@@ -387,9 +387,12 @@ trucoTableRender = function (context, toluca) {
             // console.log('d', d);
             path.setAttributeNS(null, "d", d);
             // // newLine.setAttribute('c', );
-            path.setAttribute('stroke-width', '0');
-            path.setAttribute('stroke', 'transparent');
+
+            // path.setAttribute('stroke', 'red');
+            // path.setAttribute('stroke-width', '2');
+
             // path.setAttribute('transform',  ' translate('+H+','+K+')');
+            $(path).addClass('path');
             $(container).append(path);
         }
         // paths
@@ -406,10 +409,13 @@ trucoTableRender = function (context, toluca) {
         $this.render($this.size, event.game.positions);
     };
     this.receivingCards = function (event) {
-        if (event.player.id == PRINCIPAL.id){
-            for (i in $this.players){
-                if ($this.players[i].user.id == PRINCIPAL.id){
+        if (event.player.id == PRINCIPAL.id) {
+            for (i in $this.players) {
+                console.log('giving cards to user ', [i, event.cards])
+                if ($this.players[i].user.id == PRINCIPAL.id) {
                     $this.players[i].receivingCards(event.player, event.cards);
+                } else {
+                    $this.players[i].receivingCards(event.player, [{}, {}, {}]);
                 }
             }
         }
@@ -417,13 +423,13 @@ trucoTableRender = function (context, toluca) {
 
     this.size = 6;
     this.players = [];
-    this.render(this.size, [null,null, null,null, null,null]);
+    this.render(this.size, [null, null, null, null, null, null]);
 
 
     this.setupButtons = function () {
         var index = 0;
         if ($this.showStartButton) {
-            new Button(index++, 'Iniciar', function(){
+            new Button(index++, 'Iniciar', function () {
                 $this.startGame();
             });
             new Button(index++, 'Cancelar', function () {

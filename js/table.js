@@ -61,7 +61,7 @@ trucoTableRender = function (context, toluca) {
         return element;
     };
 
-    var getButton = function (index, text) {
+    var Button = function (index, text, action) {
         var rect = getRect(0, 0, 100, 50, 'blue');
         var g = getG();
         var txt = addText(text);
@@ -89,7 +89,7 @@ trucoTableRender = function (context, toluca) {
 
 
         g.addEventListener("click", function () {
-            alert('Click Button!');
+            action();
         });
 
 
@@ -100,7 +100,7 @@ trucoTableRender = function (context, toluca) {
         circle.setAttributeNS(null, 'cx', x);
         circle.setAttributeNS(null, 'cy', y);
         circle.setAttributeNS(null, 'r', r);
-        if (color != null){
+        if (color != null) {
             circle.setAttributeNS(null, 'fill', color);
         }
         //circle.setAttribute('transform',  ' translate(400,250)');
@@ -226,9 +226,9 @@ trucoTableRender = function (context, toluca) {
 
         var circle = getCircle(radious, radious, radious);
         $(circle).addClass('free');
-        if (index%2==0){
+        if (index % 2 == 0) {
             $(circle).addClass('team1');
-        }else{
+        } else {
             $(circle).addClass('team2');
         }
 
@@ -390,11 +390,21 @@ trucoTableRender = function (context, toluca) {
     this.setupButtons = function () {
         var index = 0;
         if ($this.showStartButton) {
-            getButton(index++, 'Iniciar');
-            getButton(index++, 'Cancelar');
+            new Button(index++, 'Iniciar', function(){
+                $this.startGame();
+            });
+            new Button(index++, 'Cancelar', function () {
+            });
         }
-        getButton(index++, 'Salir');
+        new Button(index++, 'Salir');
     }
     this.setupButtons();
+
+
+    this.startGame = function () {
+        console.log('request start game', [context.table.roomId, context.table.id]);
+        toluca.startGame(context.table.roomId, context.table.id)
+
+    };
 
 };

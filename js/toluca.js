@@ -169,6 +169,17 @@ function TolucaClient(render){
     };
 
 
+    this.startGame = function(roomId, tableId,position){
+        ws.sendMessage({
+            "command":"start_game",
+            "data" : {
+                "roomId" : roomId,
+                "tableId" : tableId
+            }
+        });
+    };
+
+
     ws.connect();
 
 

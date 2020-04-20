@@ -33,6 +33,7 @@
             if (tableRenderer == null){
                 console.log('creating table renderer', data.id);
                 var tableRenderer = new trucoTableRender({table:data}, toluca);
+
                 tableRendererList[data.id]  = {
                     renderer : tableRenderer,
                     table : data
@@ -215,7 +216,7 @@
                  xmlns:xlink="http://www.w3.org/1999/xlink"
                  style="background: green"
             >
-                <g transform="translate(10, 600)" id="buttons">
+                <g transform="translate(10, 600)" id="buttons" class="table-buttons">
                 </g>
             </svg>
         </div>

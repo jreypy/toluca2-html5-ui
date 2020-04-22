@@ -96,7 +96,10 @@ function TolucaClient(render){
         }
     };
     this.trucoGameEvent = function(event){
-        if (event.eventName == 'GAME_STARTED'){
+        if (event.eventName == 'PLAY_REQUEST'){
+            $this.playRequested(event);
+        }
+        else if (event.eventName == 'GAME_STARTED'){
             $this.gameStarted(event);
         }
         else if (event.eventName == 'GIVING_CARDS'){
@@ -128,6 +131,10 @@ function TolucaClient(render){
     // Table Events
     this.tablePositionSetted = function(data){
         render.tablePositionSetted(data);
+    };
+
+    this.playRequested = function(event){
+        render.playRequested(event);
     };
 
     this.gameStarted = function(data){

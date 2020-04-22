@@ -300,6 +300,10 @@ trucoTableRender = function (context, toluca) {
             }
             container.appendChild(g);
         };
+        this.playRequest = function(event){
+            console.log('play requested');
+            $(circle).addClass('waiting');
+        };
 
         var cardsManager = new CardsManager(index, {}, point.x, point.y, rotation);
 
@@ -321,6 +325,16 @@ trucoTableRender = function (context, toluca) {
         return this;
 
     };
+
+
+    this.getPlayer = function(playerId){
+        for (var i in $this.players){
+            if ($this.players[i].user.id == playerId){
+                return $this.players[i];
+            }
+        }
+        return null;
+    }
 
 
     if (table.status == 'NEW') {
@@ -407,10 +421,16 @@ trucoTableRender = function (context, toluca) {
             $this.players[i].setPlayer(params.table.positions[i], params.index == i);
         }
     };
+
+    this.playRequested = function(event){
+        $this.getPlayer(event.player.id).playRequest(event);
+    };
+
     this.gameStarted = function (event) {
         $this.size = event.game.size;
         $this.render($this.size, event.game.positions);
     };
+
     this.receivingCards = function (event) {
         if (event.player.id == PRINCIPAL.id) {
             for (i in $this.players) {

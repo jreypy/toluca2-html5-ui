@@ -113,6 +113,10 @@
                 var tableRenderer = getTrucoTableRender(data.table);
                 tableRenderer.tablePositionSetted({player: data.user, index: data.position, table: data.table});
             },
+            playRequested : function(event){
+                var tableRenderer = getTrucoTableRender({id: event.tableId});
+                tableRenderer.playRequested(event);
+            },
             gameStarted : function(event){
                 var tableRenderer = getTrucoTableRender({id: event.tableId});
                 tableRenderer.gameStarted(event);

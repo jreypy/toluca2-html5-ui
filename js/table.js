@@ -316,6 +316,7 @@ trucoTableRender = function (context, toluca) {
 
         this.playRequest = function (event) {
             console.log('play requested');
+            $(container).find('.waiting').removeClass('waiting');
             $(circle).addClass('waiting');
         };
 

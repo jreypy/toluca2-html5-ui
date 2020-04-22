@@ -102,3 +102,18 @@ button {
 .player .free .table-text {
     fill: gray;
 }
+
+@keyframes blink {
+    100%,
+    0% {
+        fill-opacity: 1;
+    }
+    60% {
+        fill-opacity: 0.5;
+        fill: yellow;
+    }
+}
+
+.player-circle.waiting{
+    animation: blink 0.8s infinite;
+}

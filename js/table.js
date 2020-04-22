@@ -309,6 +309,9 @@ trucoTableRender = function (context, toluca) {
         g.appendChild(text);
 
         $(g).addClass('player');
+
+        $(circle).addClass('player-circle');
+
         container.appendChild(g);
 
         if (user != null) {

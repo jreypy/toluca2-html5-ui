@@ -1,3 +1,9 @@
+
+var TrucoGamePlay = {
+    PLAY_CARD : 'PLAY_CARD'
+};
+
+
 var efectoFinalizado = function (index, event) {
     console.log('efector finalizado [', index);
     console.log(event);
@@ -133,7 +139,9 @@ trucoTableRender = function (context, toluca) {
     };
 
 
-    var CardsManager = function (index, circle, x, y, rotation) {
+    var CardsManager = function (playerManager, index, circle, x, y, rotation) {
+        console.log('creating cards manaager  ', [playerManager, circle, x, y, rotation]);
+
         var $this = this;
         this.cards = [];
         this.rotation = rotation;
@@ -144,10 +152,9 @@ trucoTableRender = function (context, toluca) {
         };
 
         this.card = function (data) {
-
+            console.log('creating card', data);
             var $this = this;
             $this.data = data;
-
             console.log('add card', data);
 
             this.flip = function () {
@@ -157,11 +164,12 @@ trucoTableRender = function (context, toluca) {
             };
 
             this.play = function () {
-                // console.log('play!'+index);
-                //"rotate("+(data.rotation) +", "+data.x+ ", "+ data.y+")"
-                // data.el.setAttribute("transform",  + ' translate('+(-1*x)+','+(-1*y)+' )');
+                playerManager.playCard({
+                    type: data.type,
+                    value: data.value
+                });
                 $(animation).get(0).beginElement();
-            }
+            };
 
             var card = getDorsoImage({x: H + data.x, y: K - data.y});
             // var card = getCircle(H+data.x, K-data.y, 20);
@@ -208,11 +216,12 @@ trucoTableRender = function (context, toluca) {
         };
 
 
-        this.addCard = function (num, type, value, flipped) {
+        this.addCard = function (playerManager, num, type, value, flipped) {
             // var card = getCardImage('basto', '1', {x:x, y:y});
-            console.log('creating card', [num, type, value, flipped]);
+            console.log('creating card', [playerManager, num, type, value, flipped, rotation]);
 
             $this.cards.push(new $this.card({
+                playerManager: playerManager,
                 x: x,
                 y: y,
                 rot: rotation,
@@ -228,7 +237,8 @@ trucoTableRender = function (context, toluca) {
 
     };
 
-    var PlayerManager = function (index, point, rotation, user) {
+    var PlayerManager = function (tableManager, index, point, rotation, user) {
+        console.log('playermanager', [tableManager, index, point, rotation, user]);
         var $this = this;
         this.user = user;
 
@@ -258,6 +268,7 @@ trucoTableRender = function (context, toluca) {
 
 
         $(g).addClass('selectable');
+
         $(g).click(function () {
             // unselect / select
             circle.setAttributeNS(null, 'fill', 'gray');
@@ -294,18 +305,25 @@ trucoTableRender = function (context, toluca) {
         };
 
         this.receivingCards = function (user, cards) {
-            console.log('playermanger receiving cards', [$this.user.id, cards])
+            console.log('playermanger receiving cards', [$this.user.id, cards, rotation])
+
             for (var i in cards) {
-                cardsManager.addCard(i, cards[i].type, cards[i].value, PRINCIPAL.id == $this.user.id);
+                cardsManager.addCard(this, i, cards[i].type, cards[i].value, PRINCIPAL.id == $this.user.id, rotation);
             }
+
             container.appendChild(g);
         };
-        this.playRequest = function(event){
+
+        this.playRequest = function (event) {
             console.log('play requested');
             $(circle).addClass('waiting');
         };
 
-        var cardsManager = new CardsManager(index, {}, point.x, point.y, rotation);
+        this.playCard = function (data) {
+            tableManager.playCard(data);
+        };
+
+        var cardsManager = new CardsManager($this, index, {}, point.x, point.y, rotation);
 
 
         g.appendChild(circle);
@@ -327,9 +345,9 @@ trucoTableRender = function (context, toluca) {
     };
 
 
-    this.getPlayer = function(playerId){
-        for (var i in $this.players){
-            if ($this.players[i].user.id == playerId){
+    this.getPlayer = function (playerId) {
+        for (var i in $this.players) {
+            if ($this.players[i].user.id == playerId) {
                 return $this.players[i];
             }
         }
@@ -395,7 +413,7 @@ trucoTableRender = function (context, toluca) {
             var point2 = {x: 0, y: 0};
 
 
-            $this.players[i] = new PlayerManager(i, point1, dis[i][2], users[i]);
+            $this.players[i] = new PlayerManager(this, i, point1, dis[i][2], users[i]);
 
             // User Path
             var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -422,7 +440,7 @@ trucoTableRender = function (context, toluca) {
         }
     };
 
-    this.playRequested = function(event){
+    this.playRequested = function (event) {
         $this.getPlayer(event.player.id).playRequest(event);
     };
 
@@ -468,5 +486,16 @@ trucoTableRender = function (context, toluca) {
         toluca.startGame(context.table.roomId, context.table.id)
 
     };
+
+    this.playCard = function (data) {
+        console.log('player will play card', data);
+        toluca.play(context.table.roomId, context.table.id, {
+            type: TrucoGamePlay.PLAY_CARD,
+            card : {
+                type :  data.type,
+                value :  data.value
+            }
+        });
+    }
 
 };

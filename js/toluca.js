@@ -209,6 +209,19 @@ function TolucaClient(render, username){
         });
     };
 
+    this.play = function(roomId, tableId, data){
+        ws.sendMessage({
+            "command":"play",
+            "data" : {
+                "roomId" : roomId,
+                "tableId" : tableId,
+                "type" : data.type,
+                "card" : data.card
+            }
+        });
+
+    };
+
 
     ws.connect();
 

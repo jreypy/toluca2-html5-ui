@@ -1,4 +1,4 @@
-function TolucaWS(handler){
+function TolucaWS(handler, username){
     var connection = null;
 
     var readyStateConstants = {
@@ -10,11 +10,11 @@ function TolucaWS(handler){
     };
 
     this.connect = function(){
-        connection = new WebSocket('ws://localhost:8050/ws?amigo');
+        connection = new WebSocket('ws://localhost:8050/ws?' + username);
         console.log('connection=',connection);
 
         connection.onopen = function(event){
-            PRINCIPAL = {username:'amigo', id: 'amigo'};
+            PRINCIPAL = {username:username, id: username};
             console.log('connection opened', event);
             //connection.send(JSON.stringify(obj));
             handler.ready();
@@ -33,9 +33,9 @@ function TolucaWS(handler){
         console.log('connection is ok');
     }
 }
-function TolucaClient(render){
+function TolucaClient(render, username){
     var $this = this;
-    var ws = new TolucaWS(this);
+    var ws = new TolucaWS(this, username);
 
     this.ready = function(){
         $this.getRooms();

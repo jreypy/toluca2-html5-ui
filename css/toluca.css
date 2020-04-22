@@ -5,7 +5,24 @@ body{
     border: 1px solid gray;
     margin: 50px;
     padding: 50px;
-    display: block;
+    display: none;
+
+}
+
+/*Login*/
+.container-login{
+
+}
+.container-login .login-form {
+    width: 200px;
+    margin: auto;
+}
+.container-login div {
+}
+.container-login div button{
+    margin: auto;
+    width: 60%;
+    margin: 10px;
 }
 
 table {

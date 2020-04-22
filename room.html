@@ -11,16 +11,16 @@
 
     $(function () {
 
-        var getRoom = function(el){
+        var getRoom = function (el) {
             return $(el).attr('roomId');
         };
 
-        var getTable = function(el){
+        var getTable = function (el) {
             return $(el).attr('tableId');
         };
 
-        var foreach  = function(items, callback){
-            for (var i in items){
+        var foreach = function (items, callback) {
+            for (var i in items) {
                 callback(items[i], i);
             }
         };
@@ -28,15 +28,15 @@
 
         var tableRendererList = {};
 
-        function getTrucoTableRender(data){
+        function getTrucoTableRender(data) {
             var tableRenderer = tableRendererList[data.id];
-            if (tableRenderer == null){
+            if (tableRenderer == null) {
                 console.log('creating table renderer', data.id);
-                var tableRenderer = new trucoTableRender({table:data}, toluca);
+                var tableRenderer = new trucoTableRender({table: data}, toluca);
 
-                tableRendererList[data.id]  = {
-                    renderer : tableRenderer,
-                    table : data
+                tableRendererList[data.id] = {
+                    renderer: tableRenderer,
+                    table: data
                 };
             }
             console.log('tablerenderer found ', data.id);
@@ -45,18 +45,18 @@
 
         var render = {
 
-            updateRooms : function(rooms){
+            updateRooms: function (rooms) {
                 $('.container').hide();
                 $('.container-rooms').show();
                 $('.rooms').find('.room-item').remove();
-                foreach(rooms, function(room){
+                foreach(rooms, function (room) {
                     console.log('add rooms', room);
-                    var $room = $('<tr class="room-item"><td>'+room.id+'</td><td>'+ room.name+'</td><td><button class="select-room">Seleccionar</button></td></tr>');
-                    $('.select-room',$room).attr('roomId', room.id);
+                    var $room = $('<tr class="room-item"><td>' + room.id + '</td><td>' + room.name + '</td><td><button class="select-room">Seleccionar</button></td></tr>');
+                    $('.select-room', $room).attr('roomId', room.id);
                     $('.rooms').append($room);
                 });
             },
-            updateRoom : function(room){
+            updateRoom: function (room) {
                 console.log('update room', room);
                 render.gotoRoom();
                 $('.container-room').find('.room-title').html(room.name)
@@ -64,91 +64,91 @@
 
                 //add users
                 $('.users').find('.user-item').remove();
-                foreach(room.users, function(roomUser){
+                foreach(room.users, function (roomUser) {
                     render.addRoomUser(roomUser);
                 });
                 //add tables
                 $('.tables-tbl').find('.table-item').remove();
-                foreach(room.tables, function(table){
+                foreach(room.tables, function (table) {
                     render.createTable(table);
                 });
             },
-            gotoRooms : function(){
+            gotoRooms: function () {
                 $('.container').hide();
                 $('.container-room').show();
             },
-            gotoRoom : function(){
+            gotoRoom: function () {
                 $('.container').hide();
                 $('.container-room').show();
             },
-            gotoTable : function(table){
+            gotoTable: function (table) {
                 $('.container').hide();
                 $('.container-table').show();
 
             },
-            tableCreated : function(table){
+            tableCreated: function (table) {
                 render.createTable(table);
             },
-            createTable : function(table){
-                var $row = $('<tr class="table-item"><td>'+table.id+'</td><td>'+ table.status+'</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td><button class="select-table-btn">Seleccionar</button></td><</tr>');
+            createTable: function (table) {
+                var $row = $('<tr class="table-item"><td>' + table.id + '</td><td>' + table.status + '</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td><button class="select-table-btn">Seleccionar</button></td><</tr>');
                 $('.tables-tbl').append($row);
-                $('.select-table-btn',$row).attr('tableId', table.id);
-                $('.select-table-btn',$row).attr('roomId', table.roomId);
+                $('.select-table-btn', $row).attr('tableId', table.id);
+                $('.select-table-btn', $row).attr('roomId', table.roomId);
             },
-            roomUserJoined : function(user){
+            roomUserJoined: function (user) {
                 render.addRoomUser({user: user});
             },
-            addRoomUser : function(roomUser){
-                var $row = $('<tr class="user-item"><td>'+roomUser.user.id+'</td><td>'+ roomUser.user.username+'</td></tr>');
+            addRoomUser: function (roomUser) {
+                var $row = $('<tr class="user-item"><td>' + roomUser.user.id + '</td><td>' + roomUser.user.username + '</td></tr>');
                 $('.users').append($row);
             },
-            roomTableUserJoined : function(data){
+            roomTableUserJoined: function (data) {
                 render.gotoTable();
                 var renderer = getTrucoTableRender(data.table);
 
             },
-            tablePositionSetted : function(data){
+            tablePositionSetted: function (data) {
                 // render.gotoTable();
                 console.log('xxxx');
                 var tableRenderer = getTrucoTableRender(data.table);
                 tableRenderer.tablePositionSetted({player: data.user, index: data.position, table: data.table});
             },
-            playRequested : function(event){
+            playRequested: function (event) {
                 var tableRenderer = getTrucoTableRender({id: event.tableId});
                 tableRenderer.playRequested(event);
             },
-            gameStarted : function(event){
+            gameStarted: function (event) {
                 var tableRenderer = getTrucoTableRender({id: event.tableId});
                 tableRenderer.gameStarted(event);
             },
-            receivingCards : function(event){
+            receivingCards: function (event) {
                 var tableRenderer = getTrucoTableRender({id: event.tableId});
                 tableRenderer.receivingCards(event);
             }
         };
 
         // Rooms
-        $('.rooms').on('click','.select-room',function(){
+        $('.rooms').on('click', '.select-room', function () {
             var roomId = getRoom(this);
             toluca.joinRoom(roomId);
 
         });
-        $('.go-to-rooms').click(function(){
+        $('.go-to-rooms').click(function () {
             toluca.getRooms();
         });
-        $('.go-to-room').click(function(){
+        $('.go-to-room').click(function () {
             render.gotoRoom();
         });
 
         // Room
 
-        $('.create-table-btn').click(function(){
+        $('.create-table-btn').click(function () {
             var roomId = getRoom(this);
             console.log('create table', roomId);
             toluca.createTable(roomId);
         });
 
-        $('.container-room').on('click','.select-table-btn',function(){
+        $('.container-room').on('click', '.select-table-btn', function () {
 
             var roomId = getRoom(this);
             var tableId = getTable(this);
@@ -158,17 +158,38 @@
         });
 
 
+        var toluca = null;
 
-        var toluca = new TolucaClient(render);
+
+        $('.container.container-login').show();
+
+
+        $('.container.container-login').find('button').click(function () {
+            var username = $('.container.container-login').find(':input[name="username"]').val();
+            if (username.trim().length > 3) {
+                toluca = new TolucaClient(render, username.trim());
+            }
+
+        });
+
     });
 
 </script>
 
 <div class="wrapper">
+    <div class="container container-login">
+        <div class="login-form">
+            <div><label>Usuario</label></div>
+            <div><input type="text" name="username"></div>
+            <div>
+                <button>Ingresar</button>
+            </div>
+        </div>
+    </div>
     <div class="container container-rooms">
         <h2>Rooms</h2>
         <table class="rooms">
-            <tr >
+            <tr>
                 <th>Id</th>
                 <th>Name</th>
                 <th>Accion</th>

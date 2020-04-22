@@ -178,11 +178,14 @@ trucoTableRender = function (context, toluca) {
             };
 
             this.play = function () {
-                playerManager.playCard({
-                    type: data.type,
-                    value: data.value
-                });
-                $(animation).get(0).beginElement();
+                if (data.type != null && data.value != null){
+                    playerManager.playCard({
+                        type: data.type,
+                        value: data.value
+                    });
+                    $(animation).get(0).beginElement();
+                }
+                // Play Sound (Wrong)
             };
 
 

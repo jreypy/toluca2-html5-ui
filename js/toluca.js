@@ -99,6 +99,9 @@ function TolucaClient(render, username){
         if (event.eventName == 'PLAY_REQUEST'){
             $this.playRequested(event);
         }
+        else if (event.eventName == 'PLAY_CARD'){
+            $this.playEvent(event);
+        }
         else if (event.eventName == 'GAME_STARTED'){
             $this.gameStarted(event);
         }
@@ -135,6 +138,10 @@ function TolucaClient(render, username){
 
     this.playRequested = function(event){
         render.playRequested(event);
+    };
+
+    this.playEvent = function(event){
+        render.playEvent(event);
     };
 
     this.gameStarted = function(data){

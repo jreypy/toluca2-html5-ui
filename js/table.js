@@ -1,6 +1,5 @@
-
 var TrucoGamePlay = {
-    PLAY_CARD : 'PLAY_CARD'
+    PLAY_CARD: 'PLAY_CARD'
 };
 
 
@@ -133,9 +132,14 @@ trucoTableRender = function (context, toluca) {
         // Append image to SVG
         return getImage('images/cards/' + type + '/' + value + '.gif', points);
     };
+
+    var cardImageUrl = function(type, value){
+        return 'images/cards/' + type + '/' + value + '.gif';
+    };
+
     var setCardImage = function (svgimg, type, value) {
         // Append image to SVG
-        svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'images/cards/' + type + '/' + value + '.gif');
+        svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'href', cardImageUrl(type, value));
     };
 
 
@@ -150,12 +154,22 @@ trucoTableRender = function (context, toluca) {
 
 
         };
+        this.showCard = function(card){
+            console.log('show card', card);
+            for (var i in $this.cards){
+                if ($this.cards[i].type == card.type && $this.cards[i].value == card.value){
+                    return;
+                }
+            }
+            $this.cards[0].show(card);
 
+        };
         this.card = function (data) {
             console.log('creating card', data);
             var $this = this;
             $this.data = data;
             console.log('add card', data);
+            var card = getDorsoImage({x: H + data.x, y: K - data.y});
 
             this.flip = function () {
                 if (data.flipped) {
@@ -171,7 +185,15 @@ trucoTableRender = function (context, toluca) {
                 $(animation).get(0).beginElement();
             };
 
-            var card = getDorsoImage({x: H + data.x, y: K - data.y});
+
+            this.show = function(eventCard){
+                console.log('show card', eventCard);
+                if (data.type == null && data.value == null){
+                    card.setAttributeNS('http://www.w3.org/1999/xlink', 'href', cardImageUrl(eventCard.type, eventCard.value));
+                    $(animation).get(0).beginElement();
+                };
+            };
+
             // var card = getCircle(H+data.x, K-data.y, 20);
             var $rot = data.num - 1;
             $(card).addClass('selectable');
@@ -320,6 +342,13 @@ trucoTableRender = function (context, toluca) {
             $(circle).addClass('waiting');
         };
 
+        this.playEvent = function (event) {
+            console.log('play event', event);
+            if (event.eventName == TrucoGamePlay.PLAY_CARD){
+                cardsManager.showCard(event.card);
+            }
+        };
+
         this.playCard = function (data) {
             tableManager.playCard(data);
         };
@@ -445,6 +474,10 @@ trucoTableRender = function (context, toluca) {
         $this.getPlayer(event.player.id).playRequest(event);
     };
 
+    this.playEvent = function (event) {
+        $this.getPlayer(event.player.id).playEvent(event);
+    };
+
     this.gameStarted = function (event) {
         $this.size = event.game.size;
         $this.render($this.size, event.game.positions);
@@ -492,9 +525,9 @@ trucoTableRender = function (context, toluca) {
         console.log('player will play card', data);
         toluca.play(context.table.roomId, context.table.id, {
             type: TrucoGamePlay.PLAY_CARD,
-            card : {
-                type :  data.type,
-                value :  data.value
+            card: {
+                type: data.type,
+                value: data.value
             }
         });
     }

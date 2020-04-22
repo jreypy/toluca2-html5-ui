@@ -156,12 +156,19 @@ trucoTableRender = function (context, toluca) {
         };
         this.showCard = function(card){
             console.log('show card', card);
+            var index = 0;
             for (var i in $this.cards){
-                if ($this.cards[i].type == card.type && $this.cards[i].value == card.value){
+                if ($this.cards[i].data.type == card.type && $this.cards[i].data.value == card.value){
                     return;
                 }
+                if (!$this.cards[i].data.flipped){
+                    // Show Card no played before
+                    index = i;
+                }
+
             }
-            $this.cards[0].show(card);
+            console.log('show card', JSON.stringify($this.cards[index].data));
+            $this.cards[index].show(card);
 
         };
         this.card = function (data) {
@@ -193,8 +200,12 @@ trucoTableRender = function (context, toluca) {
                 console.log('show card', eventCard);
                 if (data.type == null && data.value == null){
                     card.setAttributeNS('http://www.w3.org/1999/xlink', 'href', cardImageUrl(eventCard.type, eventCard.value));
+                    data.flipped = true;
+                    data.type = eventCard.type;
+                    data.value = eventCard.value;
                     $(animation).get(0).beginElement();
-                };
+                }
+
             };
 
             // var card = getCircle(H+data.x, K-data.y, 20);

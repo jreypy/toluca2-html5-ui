@@ -111,8 +111,11 @@ function TolucaClient(render, username){
         else if (event.eventName == 'GIVING_CARDS'){
             $this.receivingCards(event);
         }
+        else if (event.eventName == 'HAND_STARTED'){
+            $this.handStarted(event);
+        }
         else {
-            console.log('trucoTableEvent not implemented', event);
+            console.log('trucoGameEvent not implemented', event);
         }
     };
     this.roomsFound = function(rooms){
@@ -157,6 +160,11 @@ function TolucaClient(render, username){
     this.receivingCards = function(event){
         render.receivingCards(event);
     };
+
+    this.handStarted = function(event){
+        render.handStarted(event);
+    };
+
 
 
 
@@ -212,9 +220,19 @@ function TolucaClient(render, username){
     };
 
 
-    this.startGame = function(roomId, tableId,position){
+    this.startGame = function(roomId, tableId){
         ws.sendMessage({
             "command":"start_game",
+            "data" : {
+                "roomId" : roomId,
+                "tableId" : tableId
+            }
+        });
+    };
+
+    this.startHand = function(roomId, tableId){
+        ws.sendMessage({
+            "command":"start_hand",
             "data" : {
                 "roomId" : roomId,
                 "tableId" : tableId

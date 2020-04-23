@@ -198,6 +198,10 @@ trucoTableRender = function (context, toluca) {
             };
 
 
+            this.remove = function () {
+                $(card).remove();
+            };
+
             this.show = function (eventCard) {
                 console.log('show card', eventCard);
                 if (data.type == null && data.value == null) {
@@ -273,6 +277,14 @@ trucoTableRender = function (context, toluca) {
         };
 
 
+        this.cleanCards = function () {
+            console.log('remove cards from user');
+            for (i in $this.cards) {
+                $this.cards[i].remove();
+            }
+        };
+
+
     };
 
     var PlayerManager = function (tableManager, index, point, rotation, user) {
@@ -341,7 +353,10 @@ trucoTableRender = function (context, toluca) {
             }
 
         };
-
+        this.cleanCards = function () {
+            console.log('remove cards from user [' + $this.user.id + ']');
+            cardsManager.cleanCards();
+        };
         this.receivingCards = function (user, cards) {
             console.log('playermanger receiving cards', [$this.user.id, cards, rotation])
 
@@ -365,7 +380,7 @@ trucoTableRender = function (context, toluca) {
             }
         };
 
-        this.playCard = function ( data) {
+        this.playCard = function (data) {
             return tableManager.playCard($this.user, data);
         };
 
@@ -480,10 +495,16 @@ trucoTableRender = function (context, toluca) {
         }
         // paths
     };
+
+    this.cleanCards = function () {
+        for (i in $this.players) {
+            $this.players[i].cleanCards();
+        }
+    };
+
     this.tablePositionSetted = function (params) {
         console.log('setting position ', params);
         for (var i in params.table.positions) {
-
             $this.players[i].setPlayer(params.table.positions[i], params.index == i);
         }
     };
@@ -509,14 +530,18 @@ trucoTableRender = function (context, toluca) {
             var $message = $('<p>' + event.messages[i].text + '</p>');
             $(tableContainer).find('.messages').append($message);
         }
-
         alert('Mano ha finalizado');
+        this.startHand();
 
     }
     this.gameStarted = function (event) {
         $this.size = event.game.size;
         $this.render($this.size, event.game.positions);
     };
+
+    this.handStarted = function (event) {
+        $this.cleanCards();
+    }
 
     this.receivingCards = function (event) {
         if (event.player.id == PRINCIPAL.id) {
@@ -554,6 +579,11 @@ trucoTableRender = function (context, toluca) {
         console.log('request start game', [context.table.roomId, context.table.id]);
         toluca.startGame(context.table.roomId, context.table.id)
 
+    };
+
+    this.startHand = function () {
+        console.log('request start hand', [context.table.roomId, context.table.id]);
+        toluca.startHand(context.table.roomId, context.table.id);
     };
 
     this.playCard = function (user, data) {

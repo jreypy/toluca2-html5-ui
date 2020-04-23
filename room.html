@@ -121,6 +121,10 @@
                 var tableRenderer = getTrucoTableRender({id: event.tableId});
                 tableRenderer.playEvent(event);
             },
+            handEnded: function(event){
+                var tableRenderer = getTrucoTableRender({id: event.tableId});
+                tableRenderer.handEnded(event);
+            },
             gameStarted: function (event) {
                 var tableRenderer = getTrucoTableRender({id: event.tableId});
                 tableRenderer.gameStarted(event);
@@ -249,13 +253,18 @@
             <!--<path  d="M 0,0 M 300,300"></path>-->
 
             <!--</svg>-->
-            <svg id="table-screen" height="700" width="100%" xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink"
-                 style="background: green"
-            >
-                <g transform="translate(10, 600)" id="buttons" class="table-buttons">
-                </g>
-            </svg>
+            <div style="background: green">
+                <div class="messages">
+                    <p>Hola...</p>
+                </div>
+                <svg id="table-screen" height="700" width="100%" xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                     style="background: green"
+                >
+                    <g transform="translate(10, 600)" id="buttons" class="table-buttons">
+                    </g>
+                </svg>
+            </div>
         </div>
     </div>
 </div>

@@ -134,3 +134,12 @@ button {
 .player-circle.waiting{
     animation: blink 0.8s infinite;
 }
+
+/*Table Messages*/
+.messages {
+    padding: 20px;
+}
+.messages p {
+    font-size: 14pt;
+    color: yellow;
+}

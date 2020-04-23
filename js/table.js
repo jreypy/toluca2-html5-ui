@@ -15,6 +15,7 @@ trucoTableRender = function (context, toluca) {
     console.log('render table', context.table);
     var svgns = "http://www.w3.org/2000/svg";
     var container = document.getElementById('table-screen');
+    var tableContainer = $('.container-table');
 
     var table = context.table;
     this.showStartButton = table.owner.username == PRINCIPAL.username;
@@ -133,7 +134,7 @@ trucoTableRender = function (context, toluca) {
         return getImage('images/cards/' + type + '/' + value + '.gif', points);
     };
 
-    var cardImageUrl = function(type, value){
+    var cardImageUrl = function (type, value) {
         return 'images/cards/' + type + '/' + value + '.gif';
     };
 
@@ -154,14 +155,14 @@ trucoTableRender = function (context, toluca) {
 
 
         };
-        this.showCard = function(card){
+        this.showCard = function (card) {
             console.log('show card', card);
             var index = 0;
-            for (var i in $this.cards){
-                if ($this.cards[i].data.type == card.type && $this.cards[i].data.value == card.value){
+            for (var i in $this.cards) {
+                if ($this.cards[i].data.type == card.type && $this.cards[i].data.value == card.value) {
                     return;
                 }
-                if (!$this.cards[i].data.flipped){
+                if (!$this.cards[i].data.flipped) {
                     // Show Card no played before
                     index = i;
                 }
@@ -185,20 +186,21 @@ trucoTableRender = function (context, toluca) {
             };
 
             this.play = function () {
-                if (data.type != null && data.value != null){
-                    playerManager.playCard({
+                if (data.type != null && data.value != null) {
+                    if (playerManager.playCard({
                         type: data.type,
                         value: data.value
-                    });
-                    $(animation).get(0).beginElement();
+                    })) {
+                        $(animation).get(0).beginElement();
+                    }
                 }
                 // Play Sound (Wrong)
             };
 
 
-            this.show = function(eventCard){
+            this.show = function (eventCard) {
                 console.log('show card', eventCard);
-                if (data.type == null && data.value == null){
+                if (data.type == null && data.value == null) {
                     card.setAttributeNS('http://www.w3.org/1999/xlink', 'href', cardImageUrl(eventCard.type, eventCard.value));
                     data.flipped = true;
                     data.type = eventCard.type;
@@ -358,13 +360,13 @@ trucoTableRender = function (context, toluca) {
 
         this.playEvent = function (event) {
             console.log('play event', event);
-            if (event.eventName == TrucoGamePlay.PLAY_CARD){
+            if (event.eventName == TrucoGamePlay.PLAY_CARD) {
                 cardsManager.showCard(event.card);
             }
         };
 
-        this.playCard = function (data) {
-            tableManager.playCard(data);
+        this.playCard = function ( data) {
+            return tableManager.playCard($this.user, data);
         };
 
         var cardsManager = new CardsManager($this, index, {}, point.x, point.y, rotation);
@@ -451,6 +453,8 @@ trucoTableRender = function (context, toluca) {
         // text.setAttributeNS(null, 'ry',10);
 
         $this.players = [];
+        $this.playRequestPlayer = null;
+
         for (var i = 0; i < dis.length; i++) {
 
             var point1 = {x: dis[i][0], y: dis[i][1]};
@@ -485,13 +489,30 @@ trucoTableRender = function (context, toluca) {
     };
 
     this.playRequested = function (event) {
+        $this.playRequestPlayer = event.player;
         $this.getPlayer(event.player.id).playRequest(event);
     };
 
     this.playEvent = function (event) {
+
         $this.getPlayer(event.player.id).playEvent(event);
     };
 
+    this.handEnded = function (event) {
+        console.log('handended', event);
+        //Hand ended and be ready ???
+        $(tableContainer).find('.messages').find('p').remove();
+        var $message = $('<p>Rojo: ' + event.game.team1.points + '  Azul: ' + event.game.team2.points + '</p>');
+        $(tableContainer).find('.messages').append($message);
+
+        for (var i in event.messages) {
+            var $message = $('<p>' + event.messages[i].text + '</p>');
+            $(tableContainer).find('.messages').append($message);
+        }
+
+        alert('Mano ha finalizado');
+
+    }
     this.gameStarted = function (event) {
         $this.size = event.game.size;
         $this.render($this.size, event.game.positions);
@@ -535,15 +556,25 @@ trucoTableRender = function (context, toluca) {
 
     };
 
-    this.playCard = function (data) {
-        console.log('player will play card', data);
-        toluca.play(context.table.roomId, context.table.id, {
-            type: TrucoGamePlay.PLAY_CARD,
-            card: {
-                type: data.type,
-                value: data.value
-            }
-        });
+    this.playCard = function (user, data) {
+        console.log('player will play card', [user, data]);
+        var playRequestPlayer = $this.playRequestPlayer;
+
+        if (playRequestPlayer != null && playRequestPlayer.id == user.id) {
+            toluca.play(context.table.roomId, context.table.id, {
+                type: TrucoGamePlay.PLAY_CARD,
+                card: {
+                    type: data.type,
+                    value: data.value
+                }
+            });
+            $this.playRequestPlayer = null;
+            return true;
+        } else {
+            alert('NO es tu Turno, aguarde un momento');
+        }
+        return false;
+
     }
 
 };

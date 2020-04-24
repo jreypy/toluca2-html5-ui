@@ -2,7 +2,6 @@ var TrucoGamePlay = {
     PLAY_CARD: 'PLAY_CARD'
 };
 
-
 var efectoFinalizado = function (index, event) {
     console.log('efector finalizado [', index);
     console.log(event);
@@ -67,7 +66,7 @@ trucoTableRender = function (context, toluca) {
         return element;
     };
 
-    var Button = function (index, text, action) {
+    var Button = function (index, text, clazz, action, param) {
         var rect = getRect(0, 0, 100, 50, 'blue');
         var g = getG();
         var txt = addText(text);
@@ -86,6 +85,8 @@ trucoTableRender = function (context, toluca) {
 
         $(rect).addClass('selectable');
         $(g).addClass('selectable');
+        $(g).addClass(clazz);
+        $(g).addClass('btn');
 
 
         var translate = 'translate(' + (index * 110 + 10) + ',0)'
@@ -95,7 +96,8 @@ trucoTableRender = function (context, toluca) {
 
 
         g.addEventListener("click", function () {
-            action();
+            console.log('execute action', action);
+            action(param);
         });
 
 
@@ -131,11 +133,11 @@ trucoTableRender = function (context, toluca) {
     };
     var getCardImage = function (type, value, points) {
         // Append image to SVG
-        return getImage('images/cards/' + type + '/' + value + '.gif', points);
+        return getImage('images/cards/' + (type+'').toLowerCase() + '/' + value + '.gif', points);
     };
 
     var cardImageUrl = function (type, value) {
-        return 'images/cards/' + type + '/' + value + '.gif';
+        return 'images/cards/' + (type+'').toLowerCase() + '/' + value + '.gif';
     };
 
     var setCardImage = function (svgimg, type, value) {
@@ -378,6 +380,11 @@ trucoTableRender = function (context, toluca) {
             if (event.eventName == TrucoGamePlay.PLAY_CARD) {
                 cardsManager.showCard(event.card);
             }
+            else if (event.text != null){
+                alert($this.user.username + ' dice: ' + event.text);
+            }else{
+                console.log('another play', event);
+            }
         };
 
         this.playCard = function (data) {
@@ -510,7 +517,11 @@ trucoTableRender = function (context, toluca) {
     };
 
     this.playRequested = function (event) {
+        $this.options = {};
         $this.playRequestPlayer = event.player;
+        if (event.player.id == PRINCIPAL.id){
+            $this.setupButtons(event.options);
+        }
         $this.getPlayer(event.player.id).playRequest(event);
     };
 
@@ -561,18 +572,40 @@ trucoTableRender = function (context, toluca) {
     this.render(this.size, [null, null, null, null, null, null]);
 
 
-    this.setupButtons = function () {
+    this.setupButtons = function (options) {
+        // Remove Buttons
+
+        $('#buttons').find('.btn').remove();
+
         var index = 0;
-        if ($this.showStartButton) {
-            new Button(index++, 'Iniciar', function () {
-                $this.startGame();
-            });
-            new Button(index++, 'Cancelar', function () {
-            });
+
+        for (var i in options){
+            $this.options[options[i].eventName] = options[i];
+
+            if (options[i].text != null){
+                new Button(index++, options[i].text,'play-btn', function(param){
+                    $this.playOption(param)
+                }, options[i]);
+            }
         }
-        new Button(index++, 'Salir');
+
+        if ($this.showStartButton) {
+            new Button(index++, 'Iniciar', 'play-btn', function (param) {
+                $this.startGame();
+            }, {});
+
+            // new Button(index++, 'Cancelar', function (param) {
+            //     render.gotoRoom();
+            // }, {});
+        }
+
+        new Button(index++, 'Salir', 'exit-btn', function (param) {
+            render.gotoRoom();
+        }, {});
+
     }
-    this.setupButtons();
+
+    this.setupButtons([]);
 
 
     this.startGame = function () {
@@ -587,24 +620,42 @@ trucoTableRender = function (context, toluca) {
     };
 
     this.playCard = function (user, data) {
-        console.log('player will play card', [user, data]);
-        var playRequestPlayer = $this.playRequestPlayer;
-
-        if (playRequestPlayer != null && playRequestPlayer.id == user.id) {
-            toluca.play(context.table.roomId, context.table.id, {
+        // Remove Buttons
+        if ($this.options[TrucoGamePlay.PLAY_CARD] != null){
+            return $this.play({
                 type: TrucoGamePlay.PLAY_CARD,
                 card: {
                     type: data.type,
                     value: data.value
                 }
             });
+        }
+        // Cant play now
+        return false;
+
+    };
+
+    this.playOption = function (option) {
+        console.log('play option', option);
+        // Remove Buttons
+        $('#buttons').find('.btn').remove();
+        $this.play({
+            type: option.type,
+            envido : option.envido
+        });
+    };
+
+    this.play = function(data){
+        var playRequestPlayer = $this.playRequestPlayer;
+        if (playRequestPlayer != null && playRequestPlayer.id == PRINCIPAL.id) {
+            toluca.play(context.table.roomId, context.table.id, data);
+            $('#buttons').find('.btn').remove();
             $this.playRequestPlayer = null;
             return true;
         } else {
             alert('NO es tu Turno, aguarde un momento');
         }
         return false;
-
-    }
+    };
 
 };

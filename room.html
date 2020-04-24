@@ -9,137 +9,143 @@
 <script>
     var PRINCIPAL = null;
 
-    $(function () {
 
-        var getRoom = function (el) {
-            return $(el).attr('roomId');
-        };
+    var getRoom = function (el) {
+        return $(el).attr('roomId');
+    };
 
-        var getTable = function (el) {
-            return $(el).attr('tableId');
-        };
+    var getTable = function (el) {
+        return $(el).attr('tableId');
+    };
 
-        var foreach = function (items, callback) {
-            for (var i in items) {
-                callback(items[i], i);
-            }
-        };
-
-
-        var tableRendererList = {};
-
-        function getTrucoTableRender(data) {
-            var tableRenderer = tableRendererList[data.id];
-            if (tableRenderer == null) {
-                console.log('creating table renderer', data.id);
-                var tableRenderer = new trucoTableRender({table: data}, toluca);
-
-                tableRendererList[data.id] = {
-                    renderer: tableRenderer,
-                    table: data
-                };
-            }
-            console.log('tablerenderer found ', data.id);
-            return tableRenderer.renderer;
+    var foreach = function (items, callback) {
+        for (var i in items) {
+            callback(items[i], i);
         }
+    };
 
-        var render = {
 
-            updateRooms: function (rooms) {
-                $('.container').hide();
-                $('.container-rooms').show();
-                $('.rooms').find('.room-item').remove();
-                foreach(rooms, function (room) {
-                    console.log('add rooms', room);
-                    var $room = $('<tr class="room-item"><td>' + room.id + '</td><td>' + room.name + '</td><td><button class="select-room">Seleccionar</button></td></tr>');
-                    $('.select-room', $room).attr('roomId', room.id);
-                    $('.rooms').append($room);
-                });
-            },
-            updateRoom: function (room) {
-                console.log('update room', room);
-                render.gotoRoom();
-                $('.container-room').find('.room-title').html(room.name)
-                $('.container-room').find('button').attr('roomId', room.id);
+    var tableRendererList = {};
 
-                //add users
-                $('.users').find('.user-item').remove();
-                foreach(room.users, function (roomUser) {
-                    render.addRoomUser(roomUser);
-                });
-                //add tables
-                $('.tables-tbl').find('.table-item').remove();
-                foreach(room.tables, function (table) {
-                    render.createTable(table);
-                });
-            },
-            gotoRooms: function () {
-                $('.container').hide();
-                $('.container-room').show();
-            },
-            gotoRoom: function () {
-                $('.container').hide();
-                $('.container-room').show();
-            },
-            gotoTable: function (table) {
-                $('.container').hide();
-                $('.container-table').show();
+    function getTrucoTableRender(data) {
+        var tableRenderer = tableRendererList[data.id];
+        if (tableRenderer == null) {
+            console.log('creating table renderer', data.id);
 
-            },
-            tableCreated: function (table) {
+            var tableRenderer = new trucoTableRender({table: data}, toluca);
+
+            tableRendererList[data.id] = {
+                renderer: tableRenderer,
+                table: data
+            };
+        }
+        console.log('tablerenderer found ', data.id);
+        return tableRenderer.renderer;
+    }
+
+    var render = {
+
+        updateRooms: function (rooms) {
+            $('.container').hide();
+            $('.container-rooms').show();
+            $('.rooms').find('.room-item').remove();
+            foreach(rooms, function (room) {
+                console.log('add rooms', room);
+                var $room = $('<tr class="room-item"><td>' + room.id + '</td><td>' + room.name + '</td><td><button class="select-room">Seleccionar</button></td></tr>');
+                $('.select-room', $room).attr('roomId', room.id);
+                $('.rooms').append($room);
+            });
+        },
+        updateRoom: function (room) {
+            console.log('update room', room);
+            render.gotoRoom();
+            $('.container-room').find('.room-title').html(room.name)
+            $('.container-room').find('button').attr('roomId', room.id);
+
+            //add users
+            $('.users').find('.user-item').remove();
+            foreach(room.users, function (roomUser) {
+                render.addRoomUser(roomUser);
+            });
+            //add tables
+            $('.tables-tbl').find('.table-item').remove();
+            foreach(room.tables, function (table) {
                 render.createTable(table);
-            },
-            createTable: function (table) {
-                var $row = $('<tr class="table-item"><td>' + table.id + '</td><td>' + table.status + '</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td><button class="select-table-btn">Seleccionar</button></td><</tr>');
-                $('.tables-tbl').append($row);
-                $('.select-table-btn', $row).attr('tableId', table.id);
-                $('.select-table-btn', $row).attr('roomId', table.roomId);
-            },
-            roomUserJoined: function (user) {
-                render.addRoomUser({user: user});
-            },
-            addRoomUser: function (roomUser) {
-                var $row = $('<tr class="user-item"><td>' + roomUser.user.id + '</td><td>' + roomUser.user.username + '</td></tr>');
-                $('.users').append($row);
-            },
-            roomTableUserJoined: function (data) {
-                render.gotoTable();
-                var renderer = getTrucoTableRender(data.table);
+            });
+        },
+        gotoRooms: function () {
+            $('.container').hide();
+            $('.container-room').show();
+        },
+        gotoRoom: function () {
+            $('.container').hide();
+            $('.container-room').show();
+        },
+        gotoTable: function (table) {
+            $('.container').hide();
+            $('.container-table').show();
 
-            },
-            tablePositionSetted: function (data) {
-                // render.gotoTable();
-                console.log('xxxx');
-                var tableRenderer = getTrucoTableRender(data.table);
-                tableRenderer.tablePositionSetted({player: data.user, index: data.position, table: data.table});
-            },
-            playRequested: function (event) {
-                var tableRenderer = getTrucoTableRender({id: event.tableId});
-                tableRenderer.playRequested(event);
-            },
-            playEvent : function(event){
-                var tableRenderer = getTrucoTableRender({id: event.tableId});
-                tableRenderer.playEvent(event);
-            },
-            handEnded: function(event){
-                var tableRenderer = getTrucoTableRender({id: event.tableId});
-                tableRenderer.handEnded(event);
-            },
-            gameStarted: function (event) {
-                var tableRenderer = getTrucoTableRender({id: event.tableId});
-                tableRenderer.gameStarted(event);
-            },
-            handStarted : function(event) {
-                var tableRenderer = getTrucoTableRender({id: event.tableId});
-                tableRenderer.handStarted(event);
-            },
-            receivingCards: function (event) {
-                var tableRenderer = getTrucoTableRender({id: event.tableId});
-                tableRenderer.receivingCards(event);
-            }
-        };
+        },
+        tableCreated: function (table) {
+            render.createTable(table);
+        },
+        createTable: function (table) {
+            var $row = $('<tr class="table-item"><td>' + table.id + '</td><td>' + table.status + '</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td><td><button class="select-table-btn">Seleccionar</button></td><</tr>');
+            $('.tables-tbl').append($row);
+            $('.select-table-btn', $row).attr('tableId', table.id);
+            $('.select-table-btn', $row).attr('roomId', table.roomId);
+        },
+        roomUserJoined: function (user) {
+            render.addRoomUser({user: user});
+        },
+        addRoomUser: function (roomUser) {
+            var $row = $('<tr class="user-item"><td>' + roomUser.user.id + '</td><td>' + roomUser.user.username + '</td></tr>');
+            $('.users').append($row);
+        },
+        roomTableUserJoined: function (data) {
+            render.gotoTable();
+            var renderer = getTrucoTableRender(data.table);
 
-        // Rooms
+        },
+        tablePositionSetted: function (data) {
+            // render.gotoTable();
+            console.log('xxxx');
+            var tableRenderer = getTrucoTableRender(data.table);
+            tableRenderer.tablePositionSetted({player: data.user, index: data.position, table: data.table});
+        },
+        playRequested: function (event) {
+            var tableRenderer = getTrucoTableRender({id: event.tableId});
+            tableRenderer.playRequested(event);
+        },
+        playEvent: function (event) {
+            var tableRenderer = getTrucoTableRender({id: event.tableId});
+            tableRenderer.playEvent(event);
+        },
+        handEnded: function (event) {
+            var tableRenderer = getTrucoTableRender({id: event.tableId});
+            tableRenderer.handEnded(event);
+        },
+        gameStarted: function (event) {
+            var tableRenderer = getTrucoTableRender({id: event.tableId});
+            tableRenderer.gameStarted(event);
+        },
+        handStarted: function (event) {
+            var tableRenderer = getTrucoTableRender({id: event.tableId});
+            tableRenderer.handStarted(event);
+        },
+        receivingCards: function (event) {
+            var tableRenderer = getTrucoTableRender({id: event.tableId});
+            tableRenderer.receivingCards(event);
+        }
+    };
+
+    // Rooms
+
+
+
+    var toluca = null;
+
+    $(function () {
         $('.rooms').on('click', '.select-room', function () {
             var roomId = getRoom(this);
             toluca.joinRoom(roomId);
@@ -170,20 +176,13 @@
         });
 
 
-        var toluca = null;
-
-
         $('.container.container-login').show();
-
-
         $('.container.container-login').find('button').click(function () {
             var username = $('.container.container-login').find(':input[name="username"]').val();
             if (username.trim().length > 3) {
                 toluca = new TolucaClient(render, username.trim());
             }
-
         });
-
     });
 
 </script>

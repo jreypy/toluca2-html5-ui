@@ -99,9 +99,6 @@ function TolucaClient(render, username){
         if (event.eventName == 'PLAY_REQUEST'){
             $this.playRequested(event);
         }
-        else if (event.eventName == 'PLAY_CARD'){
-            $this.playEvent(event);
-        }
         else if (event.eventName == 'HAND_ENDED'){
             $this.handEnded(event);
         }
@@ -115,7 +112,7 @@ function TolucaClient(render, username){
             $this.handStarted(event);
         }
         else {
-            console.log('trucoGameEvent not implemented', event);
+            $this.playEvent(event);
         }
     };
     this.roomsFound = function(rooms){
@@ -247,7 +244,8 @@ function TolucaClient(render, username){
                 "roomId" : roomId,
                 "tableId" : tableId,
                 "type" : data.type,
-                "card" : data.card
+                "card" : data.card,
+                "envido" : data.envido
             }
         });
 

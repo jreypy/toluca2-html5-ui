@@ -10,7 +10,9 @@ function TolucaWS(handler, username){
     };
 
     this.connect = function(){
-        connection = new WebSocket('ws://localhost:8050/ws?' + username);
+        //connection = new WebSocket('ws://localhost:8050/ws?' + username);
+        //Prod
+        connection = new WebSocket('ws://'+window.location.hostname+':5000/ws?' + username);
         console.log('connection=',connection);
 
         connection.onopen = function(event){

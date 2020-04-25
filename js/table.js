@@ -336,6 +336,7 @@ trucoTableRender = function (context, toluca) {
             $this.player = player;
             // $(g).find('text').remove();
             $(circle).addClass('free');
+
             if (player == null) {
                 circle.setAttributeNS(null, 'fill', 'gray');
                 // var text = addText('Player ' + (index + 1));
@@ -506,6 +507,13 @@ trucoTableRender = function (context, toluca) {
     this.cleanCards = function () {
         for (i in $this.players) {
             $this.players[i].cleanCards();
+        }
+    };
+
+    this.roomTableUserJoined = function(params){
+        console.log('roomTableUserJoined setting position ', params);
+        for (var i in params.table.positions) {
+            $this.players[i].setPlayer(params.table.positions[i], params.index == i);
         }
     };
 

@@ -438,10 +438,10 @@ trucoTableRender = function (context, toluca) {
                 [0, 240, 0],
             ],
             '4': [
-                [0, -200],
-                [200, 0],
-                [0, 200],
-                [-200, 0]
+                [0, -200, 180],
+                [200, 0, 90],
+                [0, 200, 0],
+                [-200, 0, 270]
             ],
             '6': [
                 [0, -250, 180],
@@ -603,10 +603,11 @@ trucoTableRender = function (context, toluca) {
         var index = 0;
 
         for (var i in options){
-            $this.options[options[i].eventName] = options[i];
+
+            $this.options[options[i].type] = options[i];
 
             if (options[i].text != null){
-                new Button(index++, options[i].text,'play-btn', function(param){
+                new Button(index++, options[i].text +  '','play-btn', function(param){
                     $this.playOption(param)
                 }, options[i]);
             }

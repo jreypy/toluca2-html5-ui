@@ -632,7 +632,7 @@ trucoTableRender = function (context, toluca) {
         }
 
         new Button(index++, 'Salir', 'exit-btn', function (param) {
-            render.gotoRoom();
+            toluca.leaveRoomTable(context.table.roomId, context.table.id);
         }, {});
 
     }

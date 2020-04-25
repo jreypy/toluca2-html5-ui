@@ -1,6 +1,7 @@
-body{
+body {
     font-family: Verdana;
 }
+
 .container {
     border: 1px solid gray;
     margin: 50px;
@@ -10,16 +11,19 @@ body{
 }
 
 /*Login*/
-.container-login{
+.container-login {
 
 }
+
 .container-login .login-form {
     width: 200px;
     margin: auto;
 }
+
 .container-login div {
 }
-.container-login div button{
+
+.container-login div button {
     margin: auto;
     width: 60%;
     margin: 10px;
@@ -81,6 +85,22 @@ button {
 }
 
 /*Table*/
+.tables-tbl {
+
+}
+.tables-tbl td {
+    text-align: center;
+    padding: 5px;
+}
+td.selected {
+    background: yellow;
+    font-weight: bold;
+}
+td.free {
+    color: gray;
+    font-weight: normal;
+    font-size: smaller;
+}
 
 /*Buttons*/
 .table-buttons .text {
@@ -99,13 +119,13 @@ button {
     text-transform: uppercase;
     font-weight: bold;
 
-    fill:black;
-    fill-opacity:1;
-    stroke:yellow;
-    stroke-width:1px;
-    stroke-linecap:butt;
-    stroke-linejoin:miter;
-    stroke-opacity:1;
+    fill: black;
+    fill-opacity: 1;
+    stroke: yellow;
+    stroke-width: 1px;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+    stroke-opacity: 1;
 }
 
 .player .team1 {
@@ -131,7 +151,7 @@ button {
     }
 }
 
-.player-circle.waiting{
+.player-circle.waiting {
     animation: blink 0.8s infinite;
 }
 
@@ -139,7 +159,10 @@ button {
 .messages {
     padding: 20px;
 }
+
 .messages p {
     font-size: 14pt;
     color: yellow;
 }
+
+

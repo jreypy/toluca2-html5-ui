@@ -67,6 +67,9 @@ function TolucaClient(render, username){
         else if (data.eventName == 'ROOM_USER_JOINED'){
             $this.roomFound(data.room);
         }
+        else if (data.eventName == 'USER_LEFT_TABLE'){
+            $this.currentUserLeftTable(data.table);
+        }
         else {
             console.log('command not implemented', data);
         }
@@ -78,9 +81,16 @@ function TolucaClient(render, username){
         else if (data.eventName == 'ROOM_TABLE_CREATED'){
             $this.tableCreated(data.table);
         }
-        else if (data.eventName == 'ROOM_USER_JOINED'){
-            $this.roomUserJoined(data.user);
-        }else if (data.eventName == 'TABLE_POSITION_SETTED'){
+        else if (data.eventName == 'ROOM_TABLE_DESTROYED'){
+            $this.tableDestroyed(data.table);
+        }
+        else if (data.eventName == 'ROOM_USER_JOINED') {
+            $this.roomUserJoined(data.roomId, data.user);
+        }
+        else if (data.eventName == 'USER_LEFT_ROOM'){
+                $this.userLeftRoom(data);
+        }
+        else if (data.eventName == 'TABLE_POSITION_SETTED'){
             $this.tablePositionSetted({user: data.user, table: data.table});
         }
         else {
@@ -90,6 +100,9 @@ function TolucaClient(render, username){
     this.trucoTableEvent = function(data){
         if (data.eventName == 'TABLE_POSITION_SETTED'){
             $this.tablePositionSetted(data);
+        }
+        else if (data.eventName == 'ROOM_TABLE_STATUS_UPDATED'){
+            $this.tableStatusUpdated(data);
         }
         else {
             console.log('trucoTableEvent not implemented', data);
@@ -121,12 +134,27 @@ function TolucaClient(render, username){
     this.roomFound = function(rooms){
         render.updateRoom(rooms);
     };
+
+    this.currentUserLeftTable = function(table){
+        render.currentUserLeftTable(table);
+    };
+
     this.tableCreated = function(table){
         render.tableCreated(table);
     };
-    this.roomUserJoined = function(user){
-        render.roomUserJoined(user);
+
+    this.tableDestroyed = function(table){
+        render.tableDestroyed(table);
     };
+
+    this.roomUserJoined = function(roomId, user){
+        render.roomUserJoined(roomId, user);
+    };
+
+    this.userLeftRoom = function(data){
+        render.userLeftRoom(data.room.id, data.user);
+    };
+
     this.roomTableUserJoined = function(data){
         render.roomTableUserJoined(data);
     };
@@ -139,6 +167,11 @@ function TolucaClient(render, username){
         render.tablePositionSetted(data);
     };
 
+    this.tableStatusUpdated = function(data){
+        render.tableStatusUpdated(data.table.roomId, data.table);
+    };
+
+    // Game Event
     this.playRequested = function(event){
         render.playRequested(event);
     };
@@ -203,6 +236,17 @@ function TolucaClient(render, username){
             }
         });
     };
+
+    this.leaveRoomTable = function(roomId, tableId){
+        ws.sendMessage({
+            "command":"leave_room_table",
+            "data" : {
+                "roomId" : roomId,
+                "tableId" : tableId,
+            }
+        });
+    };
+
 
 
     this.setTablePosition = function(roomId, tableId,position){

@@ -99,6 +99,12 @@
         tableDestroyed : function(table){
             console.log('table destroyed', table.id);
             $('tr.table-' + table.id).remove();
+            var tableRenderer = getTrucoTableRender(table, false);
+            if (tableRenderer != null){
+                render.gotoRoom();
+                if (table.owner.id != PRINCIPAL.id)
+                    alert('Mesa fue Terminada por usuario [' +table.owner.username+ ']');
+            }
         },
         createTable: function (table) {
             var $row = $('<tr class="table-item"><td>' + table.id + '</td><td class="status">' + table.status + '</td><td class="position-0">-</td><td class="position-1">-</td><td class="position-2">-</td><td class="position-3">-</td><td class="position-4">-</td><td class="position-5"></td><td><button class="select-table-btn">Seleccionar</button></td><</tr>');

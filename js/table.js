@@ -381,6 +381,9 @@ trucoTableRender = function (context, toluca) {
             if (event.eventName == TrucoGamePlay.PLAY_CARD) {
                 cardsManager.showCard(event.card);
             }
+            else if (event.eventName == ''){
+
+            }
             else if (event.text != null){
                 alert($this.user.username + ' dice: ' + event.text);
             }else{
@@ -527,9 +530,13 @@ trucoTableRender = function (context, toluca) {
     this.playRequested = function (event) {
         $this.options = {};
         $this.playRequestPlayer = event.player;
+
         if (event.player.id == PRINCIPAL.id){
             $this.setupButtons(event.options);
+        }else{
+            $this.setupButtons([]);
         }
+
         $this.getPlayer(event.player.id).playRequest(event);
     };
 
@@ -552,7 +559,14 @@ trucoTableRender = function (context, toluca) {
         alert('Mano ha finalizado');
         this.startHand();
 
-    }
+    };
+
+    this.gameEnded = function(event){
+        alert('Partido Finalizado');
+        $this.setupButtons([]);
+    };
+
+
     this.gameStarted = function (event) {
         $this.size = event.game.size;
         // Rotate
@@ -583,7 +597,9 @@ trucoTableRender = function (context, toluca) {
 
     this.handStarted = function (event) {
         $this.cleanCards();
-    }
+    };
+
+
 
     this.receivingCards = function (event) {
         if (event.player.id == PRINCIPAL.id) {
@@ -603,13 +619,14 @@ trucoTableRender = function (context, toluca) {
     this.render(this.size, [null, null, null, null, null, null]);
 
 
+    this.setStatus = function(status){
+        $this.status = status;
+    };
+
     this.setupButtons = function (options) {
         // Remove Buttons
-
         $('#buttons').find('.btn').remove();
-
         var index = 0;
-
         for (var i in options){
 
             $this.options[options[i].type] = options[i];
@@ -621,9 +638,10 @@ trucoTableRender = function (context, toluca) {
             }
         }
 
-        if ($this.showStartButton) {
+        if ($this.showStartButton && $this.status != 'IN_PROGRESS') {
             new Button(index++, 'Iniciar', 'play-btn', function (param) {
-                $this.startGame();
+                if ($this.status != 'IN_PROGRESS')
+                    $this.startGame();
             }, {});
 
             // new Button(index++, 'Cancelar', function (param) {

@@ -10,9 +10,10 @@ function TolucaWS(handler, username){
     };
 
     this.connect = function(){
-        //connection = new WebSocket('ws://localhost:8050/ws?' + username);
+        // Dev
+        connection = new WebSocket('ws://localhost:8050/ws?' + username);
         //Prod
-        connection = new WebSocket('ws://'+window.location.hostname+':5000/ws?' + username);
+        // connection = new WebSocket('ws://'+window.location.hostname+':5000/ws?' + username);
         console.log('connection=',connection);
 
         connection.onopen = function(event){
@@ -126,6 +127,9 @@ function TolucaClient(render, username){
         else if (event.eventName == 'HAND_STARTED'){
             $this.handStarted(event);
         }
+        else if (event.eventName == 'GAME_ENDED'){
+            $this.gameEnded(event);
+        }
         else {
             $this.playEvent(event);
         }
@@ -184,7 +188,11 @@ function TolucaClient(render, username){
 
     this.handEnded = function(data){
         render.handEnded(data);
-    }
+    };
+    this.gameEnded = function(data){
+        render.gameEnded(data);
+    };
+
     this.gameStarted = function(data){
         render.gameStarted(data);
     };

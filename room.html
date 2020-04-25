@@ -34,6 +34,7 @@
             var renderer = null;
             if (create != false) {
                 renderer = new trucoTableRender({table: data}, toluca);
+                renderer.setStatus(data.status);
             }
             tableRenderer = {
                 renderer: renderer,
@@ -166,6 +167,10 @@
             }
         },
         tableStatusUpdated : function(roomId, table){
+            var tableRenderer = getTrucoTableRender(table, false);
+            if (tableRenderer != null){
+                tableRenderer.setStatus(table.status);
+            }
             $('tr.table-' + table.id).find('td.status').html(table.status);
         },
         playRequested: function (event) {
@@ -179,6 +184,10 @@
         handEnded: function (event) {
             var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
             tableRenderer.handEnded(event);
+        },
+        gameEnded: function (event) {
+            var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
+            tableRenderer.gameEnded(event);
         },
         gameStarted: function (event) {
             var tableRenderer = getTrucoTableRender({id: event.tableId}, true);

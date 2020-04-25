@@ -162,6 +162,9 @@ trucoTableRender = function (context, toluca) {
             var index = 0;
             for (var i in $this.cards) {
                 if ($this.cards[i].data.type == card.type && $this.cards[i].data.value == card.value) {
+                    $this.cards[i].data.type = null;
+                    $this.cards[i].data.value = null;
+                    $this.cards[i].show(card);
                     return;
                 }
                 if (!$this.cards[i].data.flipped) {
@@ -377,7 +380,7 @@ trucoTableRender = function (context, toluca) {
         };
 
         this.playEvent = function (event) {
-            console.log('play event', event);
+            console.log('== play event', event);
             if (event.eventName == TrucoGamePlay.PLAY_CARD) {
                 cardsManager.showCard(event.card);
             }
@@ -541,8 +544,9 @@ trucoTableRender = function (context, toluca) {
     };
 
     this.playEvent = function (event) {
-
-        $this.getPlayer(event.player.id).playEvent(event);
+        var player = $this.getPlayer(event.player.id)
+        console.log('******** player [' + player.user + ' plays ', event);
+        player.playEvent(event);
     };
 
     this.handEnded = function (event) {
@@ -566,6 +570,38 @@ trucoTableRender = function (context, toluca) {
         $this.setupButtons([]);
     };
 
+    this.reconnectGame = function(event){
+        var text = null;
+        var playRequest = null;
+
+        for (var i in event.events){
+            var e = event.events[i];
+            if (e.eventName == 'GAME_STARTED') {
+                $this.gameStarted(e);
+            }
+            else if (e.eventName == 'HAND_STARTED'){
+                $this.handStarted(e);
+            }
+            else if (e.eventName == 'GIVING_CARDS'){
+                $this.receivingCards(e);
+            }
+            else if (e.eventName == 'PLAY_CARD'){
+                $this.playEvent(e);
+            }
+            else if (e.eventName == 'PLAY_REQUEST'){
+                playRequest = e;
+            }
+            else {
+                text = e;
+            }
+        }
+
+        $this.playEvent(text);
+
+        if (playRequest != null)
+            $this.playRequested(playRequest);
+
+    }
 
     this.gameStarted = function (event) {
         $this.size = event.game.size;

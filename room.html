@@ -183,6 +183,11 @@
                 toluca = new TolucaClient(render, username.trim());
             }
         });
+
+        if ((window.location.hash+'').length > 3){
+            toluca = new TolucaClient(render, window.location.hash.substr(1));
+            // alert('->' + window.location.hash.substring(1));
+        }
     });
 
 </script>
@@ -261,7 +266,6 @@
                     <p>Hola...</p>
                 </div>
                 <svg id="table-screen" height="700" width="100%" xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink"
                      style="background: green"
                 >
                     <g transform="translate(10, 600)" id="buttons" class="table-buttons">

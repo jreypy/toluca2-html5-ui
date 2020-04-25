@@ -547,8 +547,31 @@ trucoTableRender = function (context, toluca) {
     }
     this.gameStarted = function (event) {
         $this.size = event.game.size;
+        // Rotate
+        var move = 0;
+        var len = event.game.positions.length;
+
+        for (var i=0; i<len;i++){
+            if (event.game.positions[i].id == PRINCIPAL.id){
+                move = i;
+            }
+        }
+
+        if (move > 0){
+            event.game.positions = rotateArray(event.game.positions, move);
+        }
+
         $this.render($this.size, event.game.positions);
+        console.log('rotate [' +move +']move [' + ((i+len-move)%len) + ' to [' + i + ']' );
     };
+
+    function rotateArray(array, move){
+        var array1 = array.slice(0, move);
+        var arrat2 = array.slice(move);
+        var result = arrat2.concat(array1);
+        return result;
+    }
+
 
     this.handStarted = function (event) {
         $this.cleanCards();

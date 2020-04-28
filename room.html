@@ -72,7 +72,8 @@
             toluca.createTable(roomId);
             var roomId = localStorage.getItem('room-selected');
             console.log('connect to roomId', roomId);
-            toluca.joinRoom(roomId);
+            if (roomId != null)
+                toluca.joinRoom(roomId);
         },
         updateRoom: function (room) {
             console.log('update room', room);
@@ -99,7 +100,9 @@
             var roomId = localStorage.getItem('room-selected');
             var tableId = localStorage.getItem('table-selected');
             console.log('connect to tableId', [roomId, tableId]);
-            toluca.joinRoomTable(roomId, tableId);
+
+            if (roomId != null && tableId != null)
+                toluca.joinRoomTable(roomId, tableId);
 
         },
         gotoRooms: function () {

@@ -518,8 +518,11 @@ trucoTableRender = function (context, toluca) {
 
     this.roomTableUserJoined = function(params){
         console.log('roomTableUserJoined setting position ', params);
+        console.log('reindex',  $this.players)
         for (var i in params.table.positions) {
-            $this.players[i].setPlayer(params.table.positions[i], params.index == i);
+            if ($this.players[i] != null){
+                $this.players[i].setPlayer(params.table.positions[i], params.index == i);
+            }
         }
     };
 
@@ -544,6 +547,9 @@ trucoTableRender = function (context, toluca) {
     };
 
     this.playEvent = function (event) {
+        if (event == null){
+            console.log('**** Error ****', event);
+        }
         var player = $this.getPlayer(event.player.id)
         console.log('******** player [' + player.user + ' plays ', event);
         player.playEvent(event);
@@ -596,7 +602,8 @@ trucoTableRender = function (context, toluca) {
             }
         }
 
-        $this.playEvent(text);
+        if (text != null)
+            $this.playEvent(text);
 
         if (playRequest != null)
             $this.playRequested(playRequest);

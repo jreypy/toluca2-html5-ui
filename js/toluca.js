@@ -9,6 +9,11 @@ function TolucaWS(handler, username){
         'RECONNECT_ABORTED': 4
     };
 
+    var statusCode = {
+        '1001': 'WEB_APP_IS_CLOSING'
+    };
+
+
     this.connect = function(){
         connection = new WebSocket(URL + '?' + username);
         console.log('connection=',connection);
@@ -25,6 +30,13 @@ function TolucaWS(handler, username){
             }catch (e) {
                 console.log('error reading message', e);
             }
+        };
+        connection.onerror = function(event){
+            console.log('onerror', event);
+        };
+        connection.onclose = function(event){
+            console.log('status', statusCode[event.code]);
+            handler.onerror(event);
         };
 
         this.sendMessage = function(event){
@@ -60,6 +72,11 @@ function TolucaClient(render, username){
             console.log('message not implemented', obj);
         }
     };
+    this.onerror = function(event){
+        // Request Reconnect
+        $this.connectionClosed(event);
+    }
+
     this.commandResponse = function(data){
         if (data.eventName == 'ROOMS_FOUND'){
             $this.roomsFound(data.rooms);
@@ -134,6 +151,11 @@ function TolucaClient(render, username){
             $this.playEvent(event);
         }
     };
+
+    this.connectionClosed = function(event){
+        render.connectionClosed(event);
+    };
+
     this.roomsFound = function(rooms){
         render.updateRooms(rooms);
     };

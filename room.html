@@ -55,8 +55,9 @@
     var render = {
         connectionClosed: function (event) {
             var username = localStorage.getItem('username');
-            alert('Reconectando... [' + username + ']');
             render.gotoRooms();
+            alert('Reconectando... [' + username + ']');
+            window.location.reload(true);
         },
         updateRooms: function (rooms) {
             $('.sub-container').hide();

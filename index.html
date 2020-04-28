@@ -214,7 +214,7 @@
             tableRenderer.gameEnded(event);
         },
         reconnectGame: function (event) {
-            var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
+            var tableRenderer = getTrucoTableRender(event.table, true);
             tableRenderer.reconnectGame(event);
         },
         gameStarted: function (event) {

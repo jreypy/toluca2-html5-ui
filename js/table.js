@@ -196,13 +196,17 @@ trucoTableRender = function (context, toluca) {
                         type: data.type,
                         value: data.value
                     })) {
+                        $this.repaint();
                         $(animation).get(0).beginElement();
                     }
                 }
                 // Play Sound (Wrong)
             };
 
-
+            this.repaint = function(){
+                $(card).remove();
+                container.append(card);
+            };
             this.remove = function () {
                 $(card).remove();
             };
@@ -214,6 +218,7 @@ trucoTableRender = function (context, toluca) {
                     data.flipped = true;
                     data.type = eventCard.type;
                     data.value = eventCard.value;
+                    $this.repaint();
                     $(animation).get(0).beginElement();
                 }
 
@@ -292,14 +297,17 @@ trucoTableRender = function (context, toluca) {
 
     };
 
-    var PlayerManager = function (tableManager, index, point, rotation, user) {
+    var PlayerManager = function (tableManager, index, point, rotation, user, playerIndex) {
         console.log('playermanager', [tableManager, index, point, rotation, user]);
         var $this = this;
         this.user = user;
 
         var circle = getCircle(radious, radious, radious);
         $(circle).addClass('free');
-        if (index % 2 == 0) {
+
+        console.log('playerIndex', playerIndex);
+
+        if (index % 2 == playerIndex%2) {
             $(circle).addClass('team1');
         } else {
             $(circle).addClass('team2');
@@ -435,7 +443,7 @@ trucoTableRender = function (context, toluca) {
     }
 
 
-    this.render = function (size, users) {
+    this.render = function (size, users, playerIndex) {
         $(container).find('.player').remove();
         $(container).find('.card').remove();
         $(container).find('.path').remove();
@@ -490,7 +498,7 @@ trucoTableRender = function (context, toluca) {
             var point2 = {x: 0, y: 0};
 
 
-            $this.players[i] = new PlayerManager(this, i, point1, dis[i][2], users[i]);
+            $this.players[i] = new PlayerManager(this, i, point1, dis[i][2], users[i], playerIndex);
 
             // User Path
             var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -621,12 +629,11 @@ trucoTableRender = function (context, toluca) {
                 move = i;
             }
         }
-
         if (move > 0){
             event.game.positions = rotateArray(event.game.positions, move);
         }
 
-        $this.render($this.size, event.game.positions);
+        $this.render($this.size, event.game.positions, move);
         console.log('rotate [' +move +']move [' + ((i+len-move)%len) + ' to [' + i + ']' );
     };
 
@@ -659,7 +666,7 @@ trucoTableRender = function (context, toluca) {
 
     this.size = 6;
     this.players = [];
-    this.render(this.size, [null, null, null, null, null, null]);
+    this.render(this.size, [null, null, null, null, null, null], 0);
 
 
     this.setStatus = function(status){

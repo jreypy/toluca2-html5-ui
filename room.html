@@ -69,6 +69,10 @@
                 $('.select-room', $room).attr('roomId', room.id);
                 $('.rooms').append($room);
             });
+            toluca.createTable(roomId);
+            var roomId = localStorage.getItem('room-selected');
+            console.log('connect to roomId', roomId);
+            toluca.joinRoom(roomId);
         },
         updateRoom: function (room) {
             console.log('update room', room);
@@ -91,6 +95,12 @@
                 render.createTable(table);
                 render.updateTable(table);
             });
+
+            var roomId = localStorage.getItem('room-selected');
+            var tableId = localStorage.getItem('table-selected');
+            console.log('connect to tableId', [roomId, tableId]);
+            toluca.joinRoomTable(roomId, tableId);
+
         },
         gotoRooms: function () {
             $('.sub-container').hide();
@@ -227,12 +237,17 @@
         $('.rooms').on('click', '.select-room', function () {
             var roomId = getRoom(this);
             toluca.joinRoom(roomId);
+            localStorage.setItem('room-selected', roomId);
 
         });
+
         $('.go-to-rooms').click(function () {
+            localStorage.removeItem('room-selected');
             toluca.getRooms();
         });
+
         $('.go-to-room').click(function () {
+            localStorage.removeItem('room-selected');
             render.gotoRoom();
         });
 
@@ -245,11 +260,10 @@
         });
 
         $('.container-room').on('click', '.select-table-btn', function () {
-
             var roomId = getRoom(this);
             var tableId = getTable(this);
-
             toluca.joinRoomTable(roomId, tableId);
+            localStorage.setItem('table-selected', tableId);
 
         });
 
@@ -383,7 +397,7 @@
                 <!--<path  d="M 0,0 M 300,300"></path>-->
 
                 <!--</svg>-->
-                
+
                 <div style="background: green">
                     <div class="messages">
                         <p>Hola...</p>

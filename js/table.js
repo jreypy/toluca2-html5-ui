@@ -541,11 +541,17 @@ trucoTableRender = function (context, toluca) {
     this.roomTableUserJoined = function(params){
         console.log('roomTableUserJoined setting position ', params);
         console.log('reindex',  $this.players)
-        for (var i in params.table.positions) {
-            if ($this.players[i] != null){
-                $this.players[i].setPlayer(params.table.positions[i], params.index == i);
+        console.log('status',  $this.status)
+        if ($this.status != 'IN_PROGRESS'){
+            for (var i in params.table.positions) {
+                if ($this.players[i] != null){
+                    $this.players[i].setPlayer(params.table.positions[i], params.index == i);
+                }
             }
+        }else{
+            console.log('dont do anything status is IN PROGRESS');
         }
+
     };
 
     this.tablePositionSetted = function (params) {
@@ -581,7 +587,7 @@ trucoTableRender = function (context, toluca) {
         console.log('handended', event);
         //Hand ended and be ready ???
         $(tableContainer).find('.messages').find('p').remove();
-        var $message = $('<p>Rojo: ' + event.game.team1.points + '  Azul: ' + event.game.team2.points + '</p>');
+        var $message = $('<p>' + event.game.team1.name + ': ' + event.game.team1.points + ' ' + event.game.team2.name + ': ' + event.game.team2.points + '</p>');
         $(tableContainer).find('.messages').append($message);
 
         for (var i in event.messages) {
@@ -717,6 +723,7 @@ trucoTableRender = function (context, toluca) {
         }
 
         new Button(index++, 'Salir', 'exit-btn', function (param) {
+            localStorage.removeItem('table-selected');
             render.gotoRoom();
             toluca.leaveRoomTable(context.table.roomId, context.table.id);
         }, {});

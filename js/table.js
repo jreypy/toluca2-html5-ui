@@ -191,11 +191,13 @@ trucoTableRender = function (context, toluca) {
             };
 
             this.play = function () {
+                console.log('playing card?', data);
                 if (data.type != null && data.value != null) {
                     if (playerManager.playCard({
                         type: data.type,
                         value: data.value
                     })) {
+                        console.log('start effect');
                         $this.repaint();
                         $(animation).get(0).beginElement();
                     }
@@ -236,7 +238,8 @@ trucoTableRender = function (context, toluca) {
 
             var animation = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
             animation.setAttribute('dur', '1s');
-            animation.setAttribute('begin', 'click');
+            //animation.setAttribute('begin', 'click');
+            animation.setAttribute('begin', 'indefinite');
             animation.setAttribute('repeatCount', '1');
             animation.setAttribute('fill', 'freeze');
 
@@ -261,6 +264,10 @@ trucoTableRender = function (context, toluca) {
             card.addEventListener("click", function () {
                 console.log('flip card');
                 $this.play();
+            });
+            card.addEventListener("mouseover", function () {
+                $this.repaint();
+                playerManager.repaint();
             });
 
             this.flip();
@@ -403,7 +410,14 @@ trucoTableRender = function (context, toluca) {
         };
 
         this.playCard = function (data) {
-            return tableManager.playCard($this.user, data);
+            console.log('playing card', [$this.user.id,PRINCIPAL.id])
+            if ($this.user.id == PRINCIPAL.id)
+                return tableManager.playCard($this.user, data);
+            return false;
+        };
+
+        this.repaint = function(){
+            container.appendChild(g);
         };
 
         var cardsManager = new CardsManager($this, index, {}, point.x, point.y, rotation);
@@ -605,11 +619,14 @@ trucoTableRender = function (context, toluca) {
             else if (e.eventName == 'PLAY_REQUEST'){
                 playRequest = e;
             }
+            else if (e.eventName == 'HAND_ENDED'){
+                $this.handEnded(e);
+                $this.cleanCards();
+            }
             else {
                 text = e;
             }
         }
-
         if (text != null)
             $this.playEvent(text);
 

@@ -17,7 +17,7 @@
 <!------ Include the above in your HEAD tag ---------->
 <script>
     var PRINCIPAL = null;
-    var tolucaFx = null;
+    var tolucaFx = new TolucaFX();;
 
 
     var getRoom = function (el) {
@@ -243,7 +243,6 @@
 
     $(function () {
         $('.rooms').on('click', '.select-room', function () {
-            alert(1);
             var roomId = getRoom(this);
             toluca.joinRoom(roomId);
             localStorage.setItem('room-selected', roomId);
@@ -285,6 +284,7 @@
                 window.location.hash = '#' + username.trim();
                 // toluca = new TolucaClient(render, username.trim());
                 window.location.reload(true);
+                tolucaFx.tableCreatedEffect();
             }
         });
 
@@ -292,7 +292,7 @@
 
         if (username != null){
             $('.username-txt').text(localStorage.getItem('username'));
-            tolucaFx = new TolucaFX();
+            
             toluca = new TolucaClient(render, username);
         }else{
             if ((window.location.hash + '').length > 3) {
@@ -305,6 +305,7 @@
         $('.logout').click(function(){
             localStorage.removeItem('username');
             window.location.hash = '';
+            tolucaFx.tableCreatedEffect();
             window.location.reload(true);
         });
 

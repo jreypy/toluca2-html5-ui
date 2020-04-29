@@ -174,7 +174,7 @@ trucoTableRender = function (context, toluca) {
         this.show = function (message) {
             $(text).text(message);
             $(g).addClass('show');
-            setTimeout(function(){
+            setTimeout(function () {
                 $(g).removeClass('show');
             }, 2000)
         }
@@ -483,8 +483,6 @@ trucoTableRender = function (context, toluca) {
         g.appendChild(text);
 
 
-
-
         $(g).addClass('player');
         $(circle).addClass('player-circle');
 
@@ -656,7 +654,6 @@ trucoTableRender = function (context, toluca) {
         }
         alert('Mano ha finalizado');
         this.startHand();
-
     };
 
     this.gameEnded = function (event) {

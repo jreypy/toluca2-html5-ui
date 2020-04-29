@@ -156,3 +156,10 @@ td.free {
 }
 
 
+/*speech-ballon*/
+.speech-ballon {
+    display:none;
+}
+.speech-ballon.show {
+    display:block;
+}

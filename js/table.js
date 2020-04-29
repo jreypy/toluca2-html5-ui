@@ -52,18 +52,23 @@ trucoTableRender = function (context, toluca) {
 
 
         return element;
-    }
-    var addText = function (text) {
+    };
+
+
+    var createText = function (position, text, color) {
         var element = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        element.setAttributeNS(null, 'x', 1);
-        element.setAttributeNS(null, 'y', RADIO);
-        element.setAttributeNS(null, 'fill', 'yellow');
+        element.setAttributeNS(null, 'x', position.x);
+        element.setAttributeNS(null, 'y', position.y);
+        element.setAttributeNS(null, 'fill', color);
         // element.setAttributeNS(null, 'dominant-baseline', 'middle');
         // element.setAttributeNS(null, 'text-anchor', 'middle');
         var txt = document.createTextNode(text);
         element.appendChild(txt);
         $(element).addClass('table-text');
         return element;
+    };
+    var addText = function (text) {
+        return createText({x: 1, y: RADIO}, text, 'yellow');
     };
 
     var Button = function (index, text, clazz, action, param) {
@@ -133,11 +138,53 @@ trucoTableRender = function (context, toluca) {
     };
     var getCardImage = function (type, value, points) {
         // Append image to SVG
-        return getImage('images/cards/' + (type+'').toLowerCase() + '/' + value + '.gif', points);
+        return getImage('images/cards/' + (type + '').toLowerCase() + '/' + value + '.gif', points);
+    };
+
+    var SpeechBallon = function (point, rotation) {
+
+        var g = getG();
+
+        var ballon = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        ballon.setAttribute('id', 'speech_ballon');
+        //var d = 'M 20 20 -50 -100 100 0Z';
+        var d = 'M 40 20 -30 -200 30 -200Z';
+        ballon.setAttributeNS(null, "d", d);
+        ballon.setAttributeNS(null, "fill", "blue");
+        ballon.setAttributeNS(null, "fill-rule", "evenodd");
+        ballon.setAttributeNS(null, "clip-rule", "evenodd");
+
+        //translate('+(point.x-297)+','+(point.y-H+277)+')
+
+        $(g).append(ballon);
+        var circle = getCircle(40, -220, 180, 'blue');
+        $(g).append(circle);
+
+        var rotationText = 180 - rotation;
+
+
+        var text = createText({x: 40, y: -220}, 'Hola!', 'yellow');
+
+        g.setAttributeNS(null, "transform", "rotate (" + (rotation - 180) + ", 20, 20)");
+        text.setAttributeNS(null, "transform", "rotate (" + (rotationText) + ", 40, -220)");
+
+        $(g).append(text);
+        $(g).addClass('speech-ballon');
+
+        this.show = function (message) {
+            $(text).text(message);
+            $(g).addClass('show');
+            setTimeout(function(){
+                $(g).removeClass('show');
+            }, 2000)
+        }
+        this.g = g;
+
+        return this;
     };
 
     var cardImageUrl = function (type, value) {
-        return 'images/cards/' + (type+'').toLowerCase() + '/' + value + '.gif';
+        return 'images/cards/' + (type + '').toLowerCase() + '/' + value + '.gif';
     };
 
     var setCardImage = function (svgimg, type, value) {
@@ -206,7 +253,7 @@ trucoTableRender = function (context, toluca) {
                 // Play Sound (Wrong)
             };
 
-            this.repaint = function(){
+            this.repaint = function () {
                 $(card).remove();
                 container.append(card);
             };
@@ -315,7 +362,7 @@ trucoTableRender = function (context, toluca) {
 
         console.log('playerIndex', playerIndex);
 
-        if (index % 2 == playerIndex%2) {
+        if (index % 2 == playerIndex % 2) {
             $(circle).addClass('team1');
         } else {
             $(circle).addClass('team2');
@@ -338,10 +385,15 @@ trucoTableRender = function (context, toluca) {
         g.setAttribute('transform', translate)
 
 
+        this.speechBallon = new SpeechBallon(point, rotation);
+        $(g).append(this.speechBallon.g);
+
         $(g).addClass('selectable');
 
         $(g).click(function () {
             // unselect / select
+
+
             circle.setAttributeNS(null, 'fill', 'gray');
             if (table.status == 'NEW') {
                 toluca.setTablePosition(table.roomId, context.table.id, index);
@@ -401,24 +453,25 @@ trucoTableRender = function (context, toluca) {
                 tolucaFx.playCardEffect();
                 cardsManager.showCard(event.card);
             }
-            else if (event.eventName == ''){
+            else if (event.eventName == '') {
 
             }
-            else if (event.text != null){
-                alert($this.user.username + ' dice: ' + event.text);
-            }else{
+            else if (event.text != null) {
+                //alert($this.user.username + ' dice: ' + event.text);
+                $this.speechBallon.show(event.text);
+            } else {
                 console.log('another play', event);
             }
         };
 
         this.playCard = function (data) {
-            console.log('playing card', [$this.user.id,PRINCIPAL.id])
+            console.log('playing card', [$this.user.id, PRINCIPAL.id])
             if ($this.user.id == PRINCIPAL.id)
                 return tableManager.playCard($this.user, data);
             return false;
         };
 
-        this.repaint = function(){
+        this.repaint = function () {
             container.appendChild(g);
         };
 
@@ -429,9 +482,12 @@ trucoTableRender = function (context, toluca) {
         g.appendChild(circle2);
         g.appendChild(text);
 
-        $(g).addClass('player');
 
+
+
+        $(g).addClass('player');
         $(circle).addClass('player-circle');
+
 
         container.appendChild(g);
 
@@ -476,7 +532,7 @@ trucoTableRender = function (context, toluca) {
             ],
             '6': [
                 [0, -250, 180],
-                [340, -150, 180 - 65],
+                [340, -150, 115],
                 [340, 150, 65],
                 [0, 250, 0],
                 [-340, 150, -65],
@@ -540,17 +596,17 @@ trucoTableRender = function (context, toluca) {
         }
     };
 
-    this.roomTableUserJoined = function(params){
+    this.roomTableUserJoined = function (params) {
         console.log('roomTableUserJoined setting position ', params);
-        console.log('reindex',  $this.players)
-        console.log('status',  $this.status)
-        if ($this.status != 'IN_PROGRESS'){
+        console.log('reindex', $this.players)
+        console.log('status', $this.status)
+        if ($this.status != 'IN_PROGRESS') {
             for (var i in params.table.positions) {
-                if ($this.players[i] != null){
+                if ($this.players[i] != null) {
                     $this.players[i].setPlayer(params.table.positions[i], params.index == i);
                 }
             }
-        }else{
+        } else {
             console.log('dont do anything status is IN PROGRESS');
         }
 
@@ -568,9 +624,9 @@ trucoTableRender = function (context, toluca) {
         $this.options = {};
         $this.playRequestPlayer = event.player;
 
-        if (event.player.id == PRINCIPAL.id){
+        if (event.player.id == PRINCIPAL.id) {
             $this.setupButtons(event.options);
-        }else{
+        } else {
             $this.setupButtons([]);
         }
         $this.getPlayer(event.player.id).playRequest(event);
@@ -578,7 +634,7 @@ trucoTableRender = function (context, toluca) {
     };
 
     this.playEvent = function (event) {
-        if (event == null){
+        if (event == null) {
             console.log('**** Error ****', event);
         }
         var player = $this.getPlayer(event.player.id)
@@ -603,33 +659,33 @@ trucoTableRender = function (context, toluca) {
 
     };
 
-    this.gameEnded = function(event){
+    this.gameEnded = function (event) {
         alert('Partido Finalizado');
         $this.setupButtons([]);
     };
 
-    this.reconnectGame = function(event){
+    this.reconnectGame = function (event) {
         var text = null;
         var playRequest = null;
 
-        for (var i in event.events){
+        for (var i in event.events) {
             var e = event.events[i];
             if (e.eventName == 'GAME_STARTED') {
                 $this.gameStarted(e);
             }
-            else if (e.eventName == 'HAND_STARTED'){
+            else if (e.eventName == 'HAND_STARTED') {
                 $this.handStarted(e);
             }
-            else if (e.eventName == 'GIVING_CARDS'){
+            else if (e.eventName == 'GIVING_CARDS') {
                 $this.receivingCards(e);
             }
-            else if (e.eventName == 'PLAY_CARD'){
+            else if (e.eventName == 'PLAY_CARD') {
                 $this.playEvent(e);
             }
-            else if (e.eventName == 'PLAY_REQUEST'){
+            else if (e.eventName == 'PLAY_REQUEST') {
                 playRequest = e;
             }
-            else if (e.eventName == 'HAND_ENDED'){
+            else if (e.eventName == 'HAND_ENDED') {
                 $this.handEnded(e);
                 $this.cleanCards();
             }
@@ -651,20 +707,20 @@ trucoTableRender = function (context, toluca) {
         var move = 0;
         var len = event.game.positions.length;
 
-        for (var i=0; i<len;i++){
-            if (event.game.positions[i].id == PRINCIPAL.id){
+        for (var i = 0; i < len; i++) {
+            if (event.game.positions[i].id == PRINCIPAL.id) {
                 move = i;
             }
         }
-        if (move > 0){
+        if (move > 0) {
             event.game.positions = rotateArray(event.game.positions, move);
         }
 
         $this.render($this.size, event.game.positions, move);
-        console.log('rotate [' +move +']move [' + ((i+len-move)%len) + ' to [' + i + ']' );
+        console.log('rotate [' + move + ']move [' + ((i + len - move) % len) + ' to [' + i + ']');
     };
 
-    function rotateArray(array, move){
+    function rotateArray(array, move) {
         var array1 = array.slice(0, move);
         var arrat2 = array.slice(move);
         var result = arrat2.concat(array1);
@@ -675,7 +731,6 @@ trucoTableRender = function (context, toluca) {
     this.handStarted = function (event) {
         $this.cleanCards();
     };
-
 
 
     this.receivingCards = function (event) {
@@ -697,7 +752,7 @@ trucoTableRender = function (context, toluca) {
     this.render(this.size, [null, null, null, null, null, null], 0);
 
 
-    this.setStatus = function(status){
+    this.setStatus = function (status) {
         $this.status = status;
     };
 
@@ -705,12 +760,12 @@ trucoTableRender = function (context, toluca) {
         // Remove Buttons
         $('#buttons').find('.btn').remove();
         var index = 0;
-        for (var i in options){
+        for (var i in options) {
 
             $this.options[options[i].type] = options[i];
 
-            if (options[i].text != null){
-                new Button(index++, options[i].text +  '','play-btn', function(param){
+            if (options[i].text != null) {
+                new Button(index++, options[i].text + '', 'play-btn', function (param) {
                     $this.playOption(param)
                 }, options[i]);
             }
@@ -751,7 +806,7 @@ trucoTableRender = function (context, toluca) {
 
     this.playCard = function (user, data) {
         // Remove Buttons
-        if ($this.options[TrucoGamePlay.PLAY_CARD] != null){
+        if ($this.options[TrucoGamePlay.PLAY_CARD] != null) {
             return $this.play({
                 type: TrucoGamePlay.PLAY_CARD,
                 card: {
@@ -771,11 +826,11 @@ trucoTableRender = function (context, toluca) {
         $('#buttons').find('.btn').remove();
         $this.play({
             type: option.type,
-            envido : option.envido
+            envido: option.envido
         });
     };
 
-    this.play = function(data){
+    this.play = function (data) {
         var playRequestPlayer = $this.playRequestPlayer;
         if (playRequestPlayer != null && playRequestPlayer.id == PRINCIPAL.id) {
             toluca.play(context.table.roomId, context.table.id, data);

@@ -1,3 +1,54 @@
+function TolucaFX (){
+    function sound(src) {
+        var $this = this;
+        this.sound = document.createElement("audio");
+        this.sound.src = src;
+        this.sound.setAttribute("preload", "auto");
+        this.sound.setAttribute("controls", "none");
+        this.sound.style.display = "none";
+        document.body.appendChild(this.sound);
+
+        this.play = function(){
+            try{
+                $this.sound.play();
+            }
+            catch (e) {
+
+            }
+        };
+        this.stop = function(){
+            try{
+                $this.sound.pause();
+            }
+            catch (e) {
+            }
+        };
+    }
+
+    var tableCreated = new sound("audio/connected.wav");
+    var positionSetted = new sound("audio/checkin.wav");
+    var playRequest = new sound("audio/playrequest.wav");
+    var playCard = new sound("audio/play-card.wav");
+    var receivingCards = new sound("audio/receiving-cards.wav");
+
+
+    this.tableCreatedEffect = function(){
+        tableCreated.play();
+    };
+    this.positionSettedEffect = function(){
+        positionSetted.play();
+    };
+    this.playRequestEffect = function(){
+        playRequest.play();
+    };
+    this.playCardEffect = function(){
+        playCard.play();
+    };
+    this.receivingCardsEffect = function(){
+        receivingCards.play();
+    };
+
+}
 function TolucaWS(handler, username){
     var connection = null;
 

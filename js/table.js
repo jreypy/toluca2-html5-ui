@@ -199,6 +199,7 @@ trucoTableRender = function (context, toluca) {
                     })) {
                         console.log('start effect');
                         $this.repaint();
+                        tolucaFx.playCardEffect();
                         $(animation).get(0).beginElement();
                     }
                 }
@@ -397,6 +398,7 @@ trucoTableRender = function (context, toluca) {
         this.playEvent = function (event) {
             console.log('== play event', event);
             if (event.eventName == TrucoGamePlay.PLAY_CARD) {
+                tolucaFx.playCardEffect();
                 cardsManager.showCard(event.card);
             }
             else if (event.eventName == ''){
@@ -559,6 +561,7 @@ trucoTableRender = function (context, toluca) {
         for (var i in params.table.positions) {
             $this.players[i].setPlayer(params.table.positions[i], params.index == i);
         }
+        tolucaFx.positionSettedEffect();
     };
 
     this.playRequested = function (event) {
@@ -570,8 +573,8 @@ trucoTableRender = function (context, toluca) {
         }else{
             $this.setupButtons([]);
         }
-
         $this.getPlayer(event.player.id).playRequest(event);
+        tolucaFx.playRequestEffect();
     };
 
     this.playEvent = function (event) {
@@ -581,6 +584,7 @@ trucoTableRender = function (context, toluca) {
         var player = $this.getPlayer(event.player.id)
         console.log('******** player [' + player.user + ' plays ', event);
         player.playEvent(event);
+
     };
 
     this.handEnded = function (event) {
@@ -680,6 +684,7 @@ trucoTableRender = function (context, toluca) {
                 console.log('giving cards to user ', [i, event.cards])
                 if ($this.players[i].user.id == PRINCIPAL.id) {
                     $this.players[i].receivingCards(event.player, event.cards);
+                    tolucaFx.receivingCardsEffect();
                 } else {
                     $this.players[i].receivingCards(event.player, [{}, {}, {}]);
                 }

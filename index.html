@@ -14,6 +14,7 @@
 <!------ Include the above in your HEAD tag ---------->
 <script>
     var PRINCIPAL = null;
+    var tolucaFx = null;
 
 
     var getRoom = function (el) {
@@ -137,7 +138,8 @@
             $('.tables-tbl').append($row);
             $('.select-table-btn', $row).attr('tableId', table.id);
             $('.select-table-btn', $row).attr('roomId', table.roomId);
-
+            // Efect
+            tolucaFx.tableCreatedEffect();
         },
         updateTable: function (table) {
             $('tr.table-' + table.id).find('td').removeClass('selected');
@@ -238,6 +240,7 @@
 
     $(function () {
         $('.rooms').on('click', '.select-room', function () {
+            alert(1);
             var roomId = getRoom(this);
             toluca.joinRoom(roomId);
             localStorage.setItem('room-selected', roomId);
@@ -286,6 +289,7 @@
 
         if (username != null){
             $('.username-txt').text(localStorage.getItem('username'));
+            tolucaFx = new TolucaFX();
             toluca = new TolucaClient(render, username);
         }else{
             if ((window.location.hash + '').length > 3) {

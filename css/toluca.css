@@ -37,7 +37,7 @@ tr {
 }
 
 th {
-    background: #1e7e34;
+    background: #4977e3;
     color: white;
 }
 
@@ -49,8 +49,8 @@ td, th {
 button {
     margin: 4px;
     padding: 10px;
-    border: 1px solid green;
-    background: #1e7e34;
+    border: 1px solid #4977e3;
+    background: #4977e3;
     color: white;
 }
 

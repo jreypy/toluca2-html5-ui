@@ -104,7 +104,7 @@ function TolucaFX (){
             '6' : {
                 audio : ['seis.wav']
             },
-            '6' : {
+            '7' : {
                 audio : ['siete.wav']
             },
             '20' : {

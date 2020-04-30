@@ -462,7 +462,7 @@ trucoTableRender = function (context, toluca) {
                 var speech = event.eventName;
 
                 if (event.eventName == 'SAY_ENVIDO_VALUE'){
-                    speech = event.envido;
+                    speech = event.text;
                 }
                 console.log('request play speech', [event, speech]);
                 tolucaFx.playSpeech({

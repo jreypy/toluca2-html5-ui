@@ -19,8 +19,8 @@
     <!------ Include the above in your HEAD tag ---------->
     <script>
         var PRINCIPAL = null;
-        var tolucaFx = new TolucaFX();
-        ;
+
+
 
 
         var getRoom = function (el) {
@@ -243,8 +243,11 @@
 
 
         var toluca = null;
+        var tolucaFx = null;
 
         $(function () {
+            tolucaFx = new TolucaFX();
+
             $('.rooms').on('click', '.select-room', function () {
                 var roomId = getRoom(this);
                 toluca.joinRoom(roomId);

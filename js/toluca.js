@@ -36,6 +36,7 @@ function TolucaFX (){
     var playRequest = new sound("audio/playrequest.wav");
     var playCard = new sound("audio/play-card.wav");
     var receivingCards = new sound("audio/receiving-cards.wav");
+    var loaded = false;
 
     var audios= [
         tableCreated,
@@ -62,8 +63,11 @@ function TolucaFX (){
     };
 
     this.load = function(){
-        for (var i in audios){
-            audios[i].load();
+        if (!loaded){
+            for (var i in audios){
+                audios[i].load();
+            }
+            loaded = true;
         }
     }
 

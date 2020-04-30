@@ -846,6 +846,12 @@ trucoTableRender = function (context, toluca) {
     };
 
     this.play = function (data) {
+        try {
+            tolucaFx.load();
+        } catch (e) {
+            console.log(e);
+        }
+
         var playRequestPlayer = $this.playRequestPlayer;
         if (playRequestPlayer != null && playRequestPlayer.id == PRINCIPAL.id) {
             toluca.play(context.table.roomId, context.table.id, data);

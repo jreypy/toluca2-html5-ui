@@ -245,10 +245,21 @@
         $(function () {
             tolucaFx = new TolucaFX();
 
+            // Load with all Clicks
+            $('body').on('click', 'button', function(){
+                try {
+                    tolucaFx.load();
+                } catch (e) {
+                    console.log(e);
+                }
+            });
+
+
             $('.rooms').on('click', '.select-room', function () {
                 var roomId = getRoom(this);
                 toluca.joinRoom(roomId);
                 localStorage.setItem('room-selected', roomId);
+
 
             });
 

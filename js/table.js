@@ -648,7 +648,7 @@ trucoTableRender = function (context, toluca) {
         // clean score
         $(tableContainer).find('.score').find('p').remove();
         $(tableContainer).find('.messages').find('p').remove();
-        
+
         var $message = $('<p>' + event.game.team1.name + ': ' + event.game.team1.points + ' ' + event.game.team2.name + ': ' + event.game.team2.points + '</p>');
         $(tableContainer).find('.score').append($message);
 
@@ -737,6 +737,7 @@ trucoTableRender = function (context, toluca) {
 
     this.handStarted = function (event) {
         $this.cleanCards();
+        $(tableContainer).find('.messages').find('p').remove();
     };
 
 

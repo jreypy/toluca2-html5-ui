@@ -10,6 +10,7 @@ var efectoFinalizado = function (index, event) {
 trucoTableRender = function (context, toluca) {
     console.log('creating trucoTableRender', [context, toluca]);
     var $this = this;
+    $this.options = {};
 
     console.log('render table', context.table);
     var svgns = "http://www.w3.org/2000/svg";
@@ -652,8 +653,12 @@ trucoTableRender = function (context, toluca) {
             var $message = $('<p>' + event.messages[i].text + '</p>');
             $(tableContainer).find('.messages').append($message);
         }
-        alert('Mano ha finalizado');
-        this.startHand();
+
+        $this.setupButtons([{
+            type:'COTINUAR_MANO',
+            text: 'Continuar'
+        }]);
+
     };
 
     this.gameEnded = function (event) {
@@ -683,8 +688,9 @@ trucoTableRender = function (context, toluca) {
                 playRequest = e;
             }
             else if (e.eventName == 'HAND_ENDED') {
+                text = null;
+                playRequest = null;
                 $this.handEnded(e);
-                $this.cleanCards();
             }
             else {
                 text = e;
@@ -754,13 +760,13 @@ trucoTableRender = function (context, toluca) {
     };
 
     this.setupButtons = function (options) {
+        console.log('setup buttons', options);
         // Remove Buttons
         $('#buttons').find('.btn').remove();
         var index = 0;
+
         for (var i in options) {
-
             $this.options[options[i].type] = options[i];
-
             if (options[i].text != null) {
                 new Button(index++, options[i].text + '', 'play-btn', function (param) {
                     $this.playOption(param)
@@ -820,11 +826,18 @@ trucoTableRender = function (context, toluca) {
     this.playOption = function (option) {
         console.log('play option', option);
         // Remove Buttons
-        $('#buttons').find('.btn').remove();
-        $this.play({
-            type: option.type,
-            envido: option.envido
-        });
+        if (option.type == 'COTINUAR_MANO'){
+            $this.setupButtons([]);
+            $this.startHand();
+        }else{
+            $('#buttons').find('.btn').remove();
+            $this.play({
+                type: option.type,
+                envido: option.envido
+            });
+        }
+
+
     };
 
     this.play = function (data) {

@@ -20,9 +20,6 @@
     <script>
         var PRINCIPAL = null;
 
-
-
-
         var getRoom = function (el) {
             return $(el).attr('roomId');
         };
@@ -282,12 +279,17 @@
             });
 
 
+            var loginProcess = function () {
+                var username = localStorage.getItem('username');
+                $('.username-txt').text(username);
+                console.log('login', username);
+                toluca = new TolucaClient(render, username);
+            };
+
             $('.sub-container.container-login').show();
             $('.sub-container.container-login').find('button').click(function () {
                 try {
-                    var soundEffect = new Audio();
-// onClick of first interaction on page before I need the sounds
-                    soundEffect.play();
+                    tolucaFx.load();
                 } catch (e) {
                     console.log(e);
                 }
@@ -295,24 +297,18 @@
                 if (username.trim().length > 3) {
                     localStorage.setItem('username', username.trim());
                     window.location.hash = '#' + username.trim();
-                    // toluca = new TolucaClient(render, username.trim());
-                    window.location.reload(true);
+                    loginProcess();
                 }
             });
+
+
+
 
             var username = localStorage.getItem('username');
 
             if (username != null) {
-                $('.username-txt').text(localStorage.getItem('username'));
-
-                toluca = new TolucaClient(render, username);
-            } else {
-                if ((window.location.hash + '').length > 3) {
-                    var username = window.location.hash.substr(1);
-                    localStorage.setItem('username', username);
-                }
+                loginProcess();
             }
-
 
             $('.logout').click(function () {
                 localStorage.removeItem('username');
@@ -347,6 +343,7 @@
     </script>
 </head>
 <body>
+
 <div class="container-sm">
     <!-- nav -->
     <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
@@ -356,6 +353,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <ul class="navbar-nav col-md-6">
+            <li></li>
         </ul>
         <ul class="navbar-nav col-md-1">
             <li class="nav-item username-txt">

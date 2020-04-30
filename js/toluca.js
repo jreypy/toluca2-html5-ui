@@ -1,13 +1,18 @@
 function TolucaFX (){
     function sound(src) {
         var $this = this;
-        this.sound = document.createElement("audio");
-        this.sound.src = src;
-        this.sound.setAttribute("preload", "auto");
-        this.sound.setAttribute("controls", "none");
-        this.sound.style.display = "none";
-        document.body.appendChild(this.sound);
+        // this.sound = document.createElement("audio");
+        // this.sound.src = src;
+        $this.sound = new Audio();
+        // this.sound.setAttribute("preload", "auto");
+        // this.sound.setAttribute("controls", "none");
+        // this.sound.style.display = "none";
+        // document.body.appendChild(this.sound);
 
+        this.load = function(){
+            $this.sound.play();
+            $this.sound.src = src;
+        }
         this.play = function(){
             try{
                 $this.sound.play();
@@ -16,6 +21,7 @@ function TolucaFX (){
 
             }
         };
+
         this.stop = function(){
             try{
                 $this.sound.pause();
@@ -31,6 +37,13 @@ function TolucaFX (){
     var playCard = new sound("audio/play-card.wav");
     var receivingCards = new sound("audio/receiving-cards.wav");
 
+    var audios= [
+        tableCreated,
+        positionSetted,
+        playRequest,
+        playCard,
+        receivingCards
+    ];
 
     this.tableCreatedEffect = function(){
         tableCreated.play();
@@ -47,6 +60,12 @@ function TolucaFX (){
     this.receivingCardsEffect = function(){
         receivingCards.play();
     };
+
+    this.load = function(){
+        for (var i in audios){
+            audios[i].load();
+        }
+    }
 
 }
 function TolucaWS(handler, username){

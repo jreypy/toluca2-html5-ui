@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+<head>
+    <title>Looping Audio</title>
+    <script type="text/javascript">
+        function play(){
+            var soundEffect = new Audio();
+            soundEffect.play();
+            setTimeout(function(){
+                soundEffect.src = 'audio/checkin.wav';
+                soundEffect.play();
+            }, 5000);
+        }
+
+    </script>
+</head>
+<body>
+<button onclick="play()">Play</button>
+</body>
+</html>

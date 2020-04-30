@@ -465,8 +465,14 @@ trucoTableRender = function (context, toluca) {
                     speech = event.text;
                 }
                 console.log('request play speech', [event, speech]);
+
+                var speecher = 'm';
+                if (index%2 == 1){
+                    speecher = 'f';
+                }
+
                 tolucaFx.playSpeech({
-                    name : 'm'
+                    name : speecher
                 }, speech);
 
                 $this.speechBallon.show(event.text);

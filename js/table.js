@@ -645,9 +645,12 @@ trucoTableRender = function (context, toluca) {
     this.handEnded = function (event) {
         console.log('handended', event);
         //Hand ended and be ready ???
+        // clean score
+        $(tableContainer).find('.score').find('p').remove();
         $(tableContainer).find('.messages').find('p').remove();
+        
         var $message = $('<p>' + event.game.team1.name + ': ' + event.game.team1.points + ' ' + event.game.team2.name + ': ' + event.game.team2.points + '</p>');
-        $(tableContainer).find('.messages').append($message);
+        $(tableContainer).find('.score').append($message);
 
         for (var i in event.messages) {
             var $message = $('<p>' + event.messages[i].text + '</p>');
@@ -705,6 +708,7 @@ trucoTableRender = function (context, toluca) {
     }
 
     this.gameStarted = function (event) {
+
         $this.size = event.game.size;
         // Rotate
         var move = 0;

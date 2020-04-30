@@ -146,13 +146,16 @@ td.free {
 }
 
 /*Table Messages*/
-.messages {
-    padding: 20px;
+.messages, .score {
+    padding: 5px;
 }
 
-.messages p {
+.score p , .messages p {
     font-size: 14pt;
     color: yellow;
+}
+.score p {
+    font-weight: bold;
 }
 
 

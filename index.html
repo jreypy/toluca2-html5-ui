@@ -1,347 +1,355 @@
 <html>
 <head>
+    <meta charset="UTF-8">
+    <link rel="icon"
+          type="image/png"
+          href="images/favicon-32x32.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-</head>
-<body>
-
-<script src="js/jquery.js"></script>
-<script src="js/jquery-ui.min.js"></script>
-<script src="js/config.js"></script>
-<script src="js/toluca.js"></script>
-<link href="css/bootstrap.css" rel="stylesheet" id="bootstrap-css">
-<link href="css/jquery-ui.css" rel="stylesheet" id="jquery-ui.css-css">
-<link href="css/toluca.css" rel="stylesheet" id="toluca-css">
-
-<script src="js/table.js"></script>
-<!------ Include the above in your HEAD tag ---------->
-<script>
-    var PRINCIPAL = null;
-    var tolucaFx = new TolucaFX();;
 
 
-    var getRoom = function (el) {
-        return $(el).attr('roomId');
-    };
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/toluca.js"></script>
+    <link href="css/bootstrap.css" rel="stylesheet" id="bootstrap-css">
+    <link href="css/jquery-ui.css" rel="stylesheet" id="jquery-ui.css-css">
+    <link href="css/toluca.css" rel="stylesheet" id="toluca-css">
 
-    var getTable = function (el) {
-        return $(el).attr('tableId');
-    };
-
-    var foreach = function (items, callback) {
-        for (var i in items) {
-            callback(items[i], i);
-        }
-    };
+    <script src="js/table.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+    <script>
+        var PRINCIPAL = null;
+        var tolucaFx = new TolucaFX();
+        ;
 
 
-    var tableRendererList = {};
+        var getRoom = function (el) {
+            return $(el).attr('roomId');
+        };
 
-    function getTrucoTableRender(data, create) {
-        var tableRenderer = tableRendererList[data.id];
-        if (tableRenderer == null || tableRenderer.renderer == null) {
-            console.log('creating table renderer', data.id);
-            var renderer = null;
-            if (create != false) {
-                renderer = new trucoTableRender({table: data}, toluca);
-                renderer.setStatus(data.status);
+        var getTable = function (el) {
+            return $(el).attr('tableId');
+        };
+
+        var foreach = function (items, callback) {
+            for (var i in items) {
+                callback(items[i], i);
             }
-            tableRenderer = {
-                renderer: renderer,
-                table: data
-            };
-            tableRendererList[data.id] = tableRenderer;
+        };
+
+
+        var tableRendererList = {};
+
+        function getTrucoTableRender(data, create) {
+            var tableRenderer = tableRendererList[data.id];
+            if (tableRenderer == null || tableRenderer.renderer == null) {
+                console.log('creating table renderer', data.id);
+                var renderer = null;
+                if (create != false) {
+                    renderer = new trucoTableRender({table: data}, toluca);
+                    renderer.setStatus(data.status);
+                }
+                tableRenderer = {
+                    renderer: renderer,
+                    table: data
+                };
+                tableRendererList[data.id] = tableRenderer;
+            }
+            console.log('tablerenderer found ', data.id);
+            return tableRenderer.renderer;
         }
-        console.log('tablerenderer found ', data.id);
-        return tableRenderer.renderer;
-    }
 
-    var render = {
-        connectionClosed: function (event) {
-            var username = localStorage.getItem('username');
-            render.gotoRooms();
-            alert('Reconectando... [' + username + ']');
-            window.location.reload(true);
-        },
-        updateRooms: function (rooms) {
-            $('.sub-container').hide();
-            $('.container-rooms').show();
-            $('.rooms').find('.room-item').remove();
-            foreach(rooms, function (room) {
-                console.log('add rooms', room);
-                var $room = $('<tr class="room-item"><td>' + room.id + '</td><td>' + room.name + '</td><td><button class="select-room">Seleccionar</button></td></tr>');
-                $('.select-room', $room).attr('roomId', room.id);
-                $('.rooms').append($room);
-            });
-            toluca.createTable(roomId);
-            var roomId = localStorage.getItem('room-selected');
-            console.log('connect to roomId', roomId);
-            if (roomId != null)
-                toluca.joinRoom(roomId);
-        },
-        updateRoom: function (room) {
-            console.log('update room', room);
-            render.gotoRoom();
-            $('.container-room').find('.room-title').html(room.name)
-            $('.container-room').find('button').attr('roomId', room.id);
-
-            //add users
-            $('.users').find('.user-item').remove();
-
-            foreach(room.users, function (roomUser) {
-                console.log('room user updated', roomUser);
-                render.addRoomUser(roomUser);
-            });
-
-            //add tables
-            $('.tables-tbl').find('.table-item').remove();
-
-            foreach(room.tables, function (table) {
-                render.createTable(table);
-                render.updateTable(table);
-            });
-
-            var roomId = localStorage.getItem('room-selected');
-            var tableId = localStorage.getItem('table-selected');
-            console.log('connect to tableId', [roomId, tableId]);
-
-            if (roomId != null && tableId != null)
-                toluca.joinRoomTable(roomId, tableId);
-
-        },
-        gotoRooms: function () {
-            $('.sub-container').hide();
-            $('.container-room').show();
-        },
-        gotoRoom: function () {
-            $('.sub-container').hide();
-            $('.container-room').show();
-        },
-        gotoTable: function (table) {
-            $('.sub-container').hide();
-            $('.container-table').show();
-
-        },
-        tableCreated: function (table) {
-            render.createTable(table);
-        },
-        tableDestroyed: function (table) {
-            console.log('table destroyed', table.id);
-            $('tr.table-' + table.id).remove();
-            var tableRenderer = getTrucoTableRender(table, false);
-            if (tableRenderer != null) {
+        var render = {
+            connectionClosed: function (event) {
+                var username = localStorage.getItem('username');
+                render.gotoRooms();
+                alert('Reconectando... [' + username + ']');
+                window.location.reload(true);
+            },
+            updateRooms: function (rooms) {
+                $('.sub-container').hide();
+                $('.container-rooms').show();
+                $('.rooms').find('.room-item').remove();
+                foreach(rooms, function (room) {
+                    console.log('add rooms', room);
+                    var $room = $('<tr class="room-item"><td>' + room.id + '</td><td>' + room.name + '</td><td><button class="select-room">Seleccionar</button></td></tr>');
+                    $('.select-room', $room).attr('roomId', room.id);
+                    $('.rooms').append($room);
+                });
+                toluca.createTable(roomId);
+                var roomId = localStorage.getItem('room-selected');
+                console.log('connect to roomId', roomId);
+                if (roomId != null)
+                    toluca.joinRoom(roomId);
+            },
+            updateRoom: function (room) {
+                console.log('update room', room);
                 render.gotoRoom();
-                if (table.owner.id != PRINCIPAL.id)
-                    alert('Mesa fue Terminada por usuario [' + table.owner.username + ']');
-            }
-        },
-        createTable: function (table) {
-            var $row = $('<tr class="table-item"><td>' + table.id + '</td><td class="status">' + table.status + '</td><td class="position-0">-</td><td class="position-1">-</td><td class="position-2">-</td><td class="position-3">-</td><td class="position-4">-</td><td class="position-5"></td><td><button class="select-table-btn">Seleccionar</button></td><</tr>');
-            $($row).addClass('table-' + table.id);
-            $('.tables-tbl').append($row);
-            $('.select-table-btn', $row).attr('tableId', table.id);
-            $('.select-table-btn', $row).attr('roomId', table.roomId);
-            // Efect
-            tolucaFx.tableCreatedEffect();
-        },
-        updateTable: function (table) {
-            $('tr.table-' + table.id).find('td').removeClass('selected');
-            if (table.positions != null) {
-                for (var i in table.positions) {
-                    var username = 'Libre';
-                    var className = 'free';
-                    if (table.positions[i] != null) {
-                        username = table.positions[i].username;
-                        className = 'selected';
+                $('.container-room').find('.room-title').html(room.name)
+                $('.container-room').find('button').attr('roomId', room.id);
+
+                //add users
+                $('.users').find('.user-item').remove();
+
+                foreach(room.users, function (roomUser) {
+                    console.log('room user updated', roomUser);
+                    render.addRoomUser(roomUser);
+                });
+
+                //add tables
+                $('.tables-tbl').find('.table-item').remove();
+
+                foreach(room.tables, function (table) {
+                    render.createTable(table);
+                    render.updateTable(table);
+                });
+
+                var roomId = localStorage.getItem('room-selected');
+                var tableId = localStorage.getItem('table-selected');
+                console.log('connect to tableId', [roomId, tableId]);
+
+                if (roomId != null && tableId != null)
+                    toluca.joinRoomTable(roomId, tableId);
+
+            },
+            gotoRooms: function () {
+                $('.sub-container').hide();
+                $('.container-room').show();
+            },
+            gotoRoom: function () {
+                $('.sub-container').hide();
+                $('.container-room').show();
+            },
+            gotoTable: function (table) {
+                $('.sub-container').hide();
+                $('.container-table').show();
+
+            },
+            tableCreated: function (table) {
+                render.createTable(table);
+            },
+            tableDestroyed: function (table) {
+                console.log('table destroyed', table.id);
+                $('tr.table-' + table.id).remove();
+                var tableRenderer = getTrucoTableRender(table, false);
+                if (tableRenderer != null) {
+                    render.gotoRoom();
+                    if (table.owner.id != PRINCIPAL.id)
+                        alert('Mesa fue Terminada por usuario [' + table.owner.username + ']');
+                }
+            },
+            createTable: function (table) {
+                var $row = $('<tr class="table-item"><td>' + table.id + '</td><td class="status">' + table.status + '</td><td class="position-0">-</td><td class="position-1">-</td><td class="position-2">-</td><td class="position-3">-</td><td class="position-4">-</td><td class="position-5"></td><td><button class="select-table-btn">Seleccionar</button></td><</tr>');
+                $($row).addClass('table-' + table.id);
+                $('.tables-tbl').append($row);
+                $('.select-table-btn', $row).attr('tableId', table.id);
+                $('.select-table-btn', $row).attr('roomId', table.roomId);
+                // Efect
+                tolucaFx.tableCreatedEffect();
+            },
+            updateTable: function (table) {
+                $('tr.table-' + table.id).find('td').removeClass('selected');
+                if (table.positions != null) {
+                    for (var i in table.positions) {
+                        var username = 'Libre';
+                        var className = 'free';
+                        if (table.positions[i] != null) {
+                            username = table.positions[i].username;
+                            className = 'selected';
+                        }
+                        $('tr.table-' + table.id).find('.position-' + i).text('' + username);
+                        $('tr.table-' + table.id).find('.position-' + i).addClass(className);
                     }
-                    $('tr.table-' + table.id).find('.position-' + i).text('' + username);
-                    $('tr.table-' + table.id).find('.position-' + i).addClass(className);
+                }
+            },
+            roomUserJoined: function (roomId, user) {
+                console.log('room user joined', user);
+                render.userLeftRoom(roomId, user);
+                render.addRoomUser({user: user});
+            },
+            userLeftRoom: function (roomId, user) {
+                $('table.users').find('tr.user-' + user.id).remove();
+            },
+            currentUserLeftTable: function () {
+                render.gotoRoom();
+            },
+            addRoomUser: function (roomUser) {
+                var $row = $('<tr class="user-item"><td>' + roomUser.user.id + '</td><td>' + roomUser.user.username + '</td></tr>');
+                $row.addClass('user-' + roomUser.user.id);
+                $('.users').append($row);
+            },
+
+            roomTableUserJoined: function (data) {
+                var renderer = getTrucoTableRender(data.table, PRINCIPAL.id == data.user.id);
+
+                render.updateTable(data.table);
+
+                if (renderer != null) {
+                    render.gotoTable();
+                    renderer.roomTableUserJoined({player: data.user, index: null, table: data.table});
+                }
+
+            },
+            tablePositionSetted: function (data) {
+                // render.gotoTable();
+                var tableRenderer = getTrucoTableRender(data.table, false);
+                render.updateTable(data.table);
+                if (tableRenderer != null) {
+                    tableRenderer.tablePositionSetted({player: data.user, index: data.position, table: data.table});
+                }
+            },
+            tableStatusUpdated: function (roomId, table) {
+                var tableRenderer = getTrucoTableRender(table, false);
+                if (tableRenderer != null) {
+                    tableRenderer.setStatus(table.status);
+                }
+                $('tr.table-' + table.id).find('td.status').html(table.status);
+            },
+            playRequested: function (event) {
+                var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
+                tableRenderer.playRequested(event);
+            },
+            playEvent: function (event) {
+                var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
+                tableRenderer.playEvent(event);
+            },
+            handEnded: function (event) {
+                var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
+                tableRenderer.handEnded(event);
+            },
+            gameEnded: function (event) {
+                var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
+                tableRenderer.gameEnded(event);
+            },
+            reconnectGame: function (event) {
+                var tableRenderer = getTrucoTableRender(event.table, true);
+                tableRenderer.reconnectGame(event);
+            },
+            gameStarted: function (event) {
+                var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
+                tableRenderer.gameStarted(event);
+            },
+            handStarted: function (event) {
+                var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
+                tableRenderer.handStarted(event);
+            },
+            receivingCards: function (event) {
+                var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
+                tableRenderer.receivingCards(event);
+            }
+        };
+
+        // Rooms
+
+
+        var toluca = null;
+
+        $(function () {
+            $('.rooms').on('click', '.select-room', function () {
+                var roomId = getRoom(this);
+                toluca.joinRoom(roomId);
+                localStorage.setItem('room-selected', roomId);
+
+            });
+
+            $('.go-to-rooms').click(function () {
+                localStorage.removeItem('room-selected');
+                toluca.getRooms();
+            });
+
+            $('.go-to-room').click(function () {
+                localStorage.removeItem('room-selected');
+                render.gotoRoom();
+            });
+
+            // Room
+
+            $('.create-table-btn').click(function () {
+                var roomId = getRoom(this);
+                console.log('create table', roomId);
+                toluca.createTable(roomId);
+            });
+
+            $('.container-room').on('click', '.select-table-btn', function () {
+                var roomId = getRoom(this);
+                var tableId = getTable(this);
+                toluca.joinRoomTable(roomId, tableId);
+                localStorage.setItem('table-selected', tableId);
+
+            });
+
+
+            $('.sub-container.container-login').show();
+            $('.sub-container.container-login').find('button').click(function () {
+                try {
+                    var soundEffect = new Audio();
+// onClick of first interaction on page before I need the sounds
+                    soundEffect.play();
+                } catch (e) {
+                    console.log(e);
+                }
+                var username = $('.sub-container.container-login').find(':input[name="username"]').val();
+                if (username.trim().length > 3) {
+                    localStorage.setItem('username', username.trim());
+                    window.location.hash = '#' + username.trim();
+                    // toluca = new TolucaClient(render, username.trim());
+                    window.location.reload(true);
+                }
+            });
+
+            var username = localStorage.getItem('username');
+
+            if (username != null) {
+                $('.username-txt').text(localStorage.getItem('username'));
+
+                toluca = new TolucaClient(render, username);
+            } else {
+                if ((window.location.hash + '').length > 3) {
+                    var username = window.location.hash.substr(1);
+                    localStorage.setItem('username', username);
                 }
             }
-        },
-        roomUserJoined: function (roomId, user) {
-            console.log('room user joined', user);
-            render.userLeftRoom(roomId, user);
-            render.addRoomUser({user: user});
-        },
-        userLeftRoom: function (roomId, user) {
-            $('table.users').find('tr.user-' + user.id).remove();
-        },
-        currentUserLeftTable: function () {
-            render.gotoRoom();
-        },
-        addRoomUser: function (roomUser) {
-            var $row = $('<tr class="user-item"><td>' + roomUser.user.id + '</td><td>' + roomUser.user.username + '</td></tr>');
-            $row.addClass('user-' + roomUser.user.id);
-            $('.users').append($row);
-        },
-
-        roomTableUserJoined: function (data) {
-            var renderer = getTrucoTableRender(data.table, PRINCIPAL.id == data.user.id);
-
-            render.updateTable(data.table);
-
-            if (renderer != null) {
-                render.gotoTable();
-                renderer.roomTableUserJoined({player: data.user, index: null, table: data.table});
-            }
-
-        },
-        tablePositionSetted: function (data) {
-            // render.gotoTable();
-            var tableRenderer = getTrucoTableRender(data.table, false);
-            render.updateTable(data.table);
-            if (tableRenderer != null) {
-                tableRenderer.tablePositionSetted({player: data.user, index: data.position, table: data.table});
-            }
-        },
-        tableStatusUpdated: function (roomId, table) {
-            var tableRenderer = getTrucoTableRender(table, false);
-            if (tableRenderer != null) {
-                tableRenderer.setStatus(table.status);
-            }
-            $('tr.table-' + table.id).find('td.status').html(table.status);
-        },
-        playRequested: function (event) {
-            var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
-            tableRenderer.playRequested(event);
-        },
-        playEvent: function (event) {
-            var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
-            tableRenderer.playEvent(event);
-        },
-        handEnded: function (event) {
-            var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
-            tableRenderer.handEnded(event);
-        },
-        gameEnded: function (event) {
-            var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
-            tableRenderer.gameEnded(event);
-        },
-        reconnectGame: function (event) {
-            var tableRenderer = getTrucoTableRender(event.table, true);
-            tableRenderer.reconnectGame(event);
-        },
-        gameStarted: function (event) {
-            var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
-            tableRenderer.gameStarted(event);
-        },
-        handStarted: function (event) {
-            var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
-            tableRenderer.handStarted(event);
-        },
-        receivingCards: function (event) {
-            var tableRenderer = getTrucoTableRender({id: event.tableId}, true);
-            tableRenderer.receivingCards(event);
-        }
-    };
-
-    // Rooms
 
 
-    var toluca = null;
-
-    $(function () {
-        $('.rooms').on('click', '.select-room', function () {
-            var roomId = getRoom(this);
-            toluca.joinRoom(roomId);
-            localStorage.setItem('room-selected', roomId);
-
-        });
-
-        $('.go-to-rooms').click(function () {
-            localStorage.removeItem('room-selected');
-            toluca.getRooms();
-        });
-
-        $('.go-to-room').click(function () {
-            localStorage.removeItem('room-selected');
-            render.gotoRoom();
-        });
-
-        // Room
-
-        $('.create-table-btn').click(function () {
-            var roomId = getRoom(this);
-            console.log('create table', roomId);
-            toluca.createTable(roomId);
-        });
-
-        $('.container-room').on('click', '.select-table-btn', function () {
-            var roomId = getRoom(this);
-            var tableId = getTable(this);
-            toluca.joinRoomTable(roomId, tableId);
-            localStorage.setItem('table-selected', tableId);
-
-        });
-
-
-        $('.sub-container.container-login').show();
-        $('.sub-container.container-login').find('button').click(function () {
-            try{
-                const soundEffect = new Audio();
-// onClick of first interaction on page before I need the sounds
-                soundEffect.play();
-            }catch(e){
-                console.log(e);
-            }
-            var username = $('.sub-container.container-login').find(':input[name="username"]').val();
-            if (username.trim().length > 3) {
-                localStorage.setItem('username', username.trim());
-                window.location.hash = '#' + username.trim();
-                // toluca = new TolucaClient(render, username.trim());
+            $('.logout').click(function () {
+                localStorage.removeItem('username');
+                window.location.hash = '';
+                tolucaFx.tableCreatedEffect();
                 window.location.reload(true);
-            }
+            });
+
+
+            //  TODO Remove
+            //PRINCIPAL = {username: 'julio'};
+            //getTrucoTableRender({id:'ss', owner: {username:'julio'}}, true);
+
+            //Dialog
+            // $( "#dialog" ).dialog({
+            //     autoOpen: false,
+            //     show: {
+            //         effect: "blind",
+            //         duration: 1000
+            //     },
+            //     hide: {
+            //         effect: "explode",
+            //         duration: 1000
+            //     }
+            // });
+            //
+            // $( "#opener" ).on( "click", function() {
+            //     $( "#dialog" ).dialog( "open" );
+            // });
         });
 
-        var username = localStorage.getItem('username');
-
-        if (username != null){
-            $('.username-txt').text(localStorage.getItem('username'));
-            
-            toluca = new TolucaClient(render, username);
-        }else{
-            if ((window.location.hash + '').length > 3) {
-                var username = window.location.hash.substr(1);
-                localStorage.setItem('username', username);
-            }
-        }
-
-
-        $('.logout').click(function(){
-            localStorage.removeItem('username');
-            window.location.hash = '';
-            tolucaFx.tableCreatedEffect();
-            window.location.reload(true);
-        });
-
-
-        //  TODO Remove
-        //PRINCIPAL = {username: 'julio'};
-        //getTrucoTableRender({id:'ss', owner: {username:'julio'}}, true);
-
-        //Dialog
-        // $( "#dialog" ).dialog({
-        //     autoOpen: false,
-        //     show: {
-        //         effect: "blind",
-        //         duration: 1000
-        //     },
-        //     hide: {
-        //         effect: "explode",
-        //         duration: 1000
-        //     }
-        // });
-        //
-        // $( "#opener" ).on( "click", function() {
-        //     $( "#dialog" ).dialog( "open" );
-        // });
-    });
-
-</script>
+    </script>
+</head>
+<body>
 <div class="container-sm">
     <!-- nav -->
     <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+                aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <ul class="navbar-nav col-md-6">
@@ -443,7 +451,7 @@
                     <svg id="table-screen" height="700" width="100%" xmlns="http://www.w3.org/2000/svg"
                          style="background: green"
                     >
-                        
+
 
                         <g transform="translate(10, 600) " id="buttons" class="table-buttons">
                         </g>

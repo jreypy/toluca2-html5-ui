@@ -22,6 +22,7 @@ function TolucaFX (){
             }
         };
 
+
         this.stop = function(){
             try{
                 $this.sound.pause();
@@ -46,6 +47,112 @@ function TolucaFX (){
         receivingCards
     ];
 
+
+    var speechers = {
+        'm' : {
+            'SAY_TRUCO' : {
+                audio : ['truco.wav']
+            },
+            'SAY_RETRUCO' : {
+                audio : ['quiero-retruco.wav']
+            },
+            'SAY_VALECUATRO' : {
+                audio : ['quiero-vale-cuatro.wav']
+            },
+            'SAY_VALECUATRO' : {
+                audio : ['quiero-vale-cuatro.wav']
+            },
+            'SAY_QUIERO' : {
+                audio : ['quiero.wav']
+            },
+            'SAY_NO_QUIERO' : {
+                audio : ['no-quiero2.wav']
+            },
+            'SAY_ENVIDO' : {
+                audio : ['envido.wav']
+            },
+            'SAY_REAL_ENVIDO' : {
+                audio : ['real-envido.wav']
+            },
+            'SAY_FALTA_ENVIDO' : {
+                audio : ['falta-envido.wav']
+            },
+            'SAY_PASO_ENVIDO' : {
+                audio : ['paso.wav']
+            },
+            'SAY_FLOR' : {
+                audio : ['paso.wav']
+            },
+            'SAY_PASO_FLOR' : {
+                audio : ['paso.wav']
+            },
+            '1' : {
+                audio : ['uno.wav']
+            },
+            '2' : {
+                audio : ['dos.wav']
+            },
+            '3' : {
+                audio : ['tres.wav']
+            },
+            '4' : {
+                audio : ['cuatro.wav']
+            },
+            '5' : {
+                audio : ['cinco.wav']
+            },
+            '6' : {
+                audio : ['seis.wav']
+            },
+            '6' : {
+                audio : ['siete.wav']
+            },
+            '20' : {
+                audio : ['veinte.wav']
+            },
+            '21' : {
+                audio : ['veintiuno.wav']
+            },
+            '22' : {
+                audio : ['veintidos.wav']
+            },
+            '23' : {
+                audio : ['veintitres.wav']
+            },
+            '24' : {
+                audio : ['veinticuatro.wav']
+            },
+            '25' : {
+                audio : ['veinticinco.wav']
+            },
+            '26' : {
+                audio : ['veintiseis.wav']
+            },
+            '27' : {
+                audio : ['veintisiete.wav']
+            },
+            '28' : {
+                audio : ['veintiocho.wav']
+            },
+            '29' : {
+                audio : ['veintinueve.wav']
+            },
+            '30' : {
+                audio : ['treinta.wav']
+            },
+            '31' : {
+                audio : ['31.wav']
+            },
+            '32' : {
+                audio : ['32.wav']
+            },
+            '33' : {
+                audio : ['33.wav']
+            }
+
+        }
+    }
+
     this.tableCreatedEffect = function(){
         tableCreated.play();
     };
@@ -62,12 +169,36 @@ function TolucaFX (){
         receivingCards.play();
     };
 
+    this.playSpeech = function(params, value){
+        try{
+            console.log('play ', [params, value]);
+            var speecher = speechers[params.name];
+            if (speecher != null){
+                var speech = speecher[value];
+                if (speech != null){
+                    if (speech.sound != null){
+                        speech.sound.play();
+                    }
+                }
+            }
+        }catch (e) {
+            console.log('speech cannot be played', e);
+        }
+    };
+
     this.load = function(){
         if (!loaded){
             for (var i in audios){
                 audios[i].load();
             }
+            for (var i in speechers){
+                for (var j in speechers[i]){
+                    speechers[i][j].sound = new sound('audio/' + i + '/'+speechers[i][j].audio);
+                    speechers[i][j].sound.load();
+                }
+            }
             loaded = true;
+            console.log('speechers loaded', speechers);
         }
     }
 

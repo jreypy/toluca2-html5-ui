@@ -459,6 +459,16 @@ trucoTableRender = function (context, toluca) {
             }
             else if (event.text != null) {
                 //alert($this.user.username + ' dice: ' + event.text);
+                var speech = event.eventName;
+
+                if (event.eventName == 'SAY_ENVIDO_VALUE'){
+                    speech = event.envido;
+                }
+                console.log('request play speech', [event, speech]);
+                tolucaFx.playSpeech({
+                    name : 'm'
+                }, speech);
+
                 $this.speechBallon.show(event.text);
             } else {
                 console.log('another play', event);

@@ -149,24 +149,31 @@ trucoTableRender = function (context, toluca) {
         var ballon = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         ballon.setAttribute('id', 'speech_ballon');
         //var d = 'M 20 20 -50 -100 100 0Z';
-        var d = 'M 40 20 -30 -200 30 -200Z';
+        var d = 'M '+(radious)+' '+(radious)+' -15 -200 '+(radious + (radious+15))+' -200Z';
         ballon.setAttributeNS(null, "d", d);
-        ballon.setAttributeNS(null, "fill", "blue");
+        ballon.setAttributeNS(null, "fill", "yellow");
         ballon.setAttributeNS(null, "fill-rule", "evenodd");
         ballon.setAttributeNS(null, "clip-rule", "evenodd");
 
         //translate('+(point.x-297)+','+(point.y-H+277)+')
 
         $(g).append(ballon);
-        var circle = getCircle(40, -220, 180, 'blue');
+        var circle = getCircle(40, -220, 180, 'yellow');
         $(g).append(circle);
 
-        var rotationText = 180 - rotation;
+        var rotationText = rotation;
+
+        // var translate = 'translate(' + (radious * -1) + ',' + (-1*CARD_HEIGHT) + ') '
+        // var rotate = ' rotate(' + (data.rot + $rot * 20) + ',' + (H + data.x + radious) + ',' + (K - data.y + CARD_HEIGHT) + ')';
+        // var transform = translate + ' ' + rotate;
+        // // console.log('rotation', [data.index,transform]);
+        // card.setAttribute('transform', transform);
 
 
-        var text = createText({x: 40, y: -220}, 'Hola!', 'yellow');
 
-        g.setAttributeNS(null, "transform", "rotate (" + (rotation - 180) + ", 20, 20)");
+        var text = createText({x: 40, y: -220}, 'Hola!', 'blue');
+
+        g.setAttributeNS(null, "transform", "rotate (" + (rotation) + ", "+radious+", "+radious+")");
         text.setAttributeNS(null, "transform", "rotate (" + (rotationText) + ", 40, -220)");
 
         $(g).append(text);
@@ -376,7 +383,7 @@ trucoTableRender = function (context, toluca) {
         var circle2 = getCircle(radious, radious, radious - 8, 'white');
 
         var g = getG();
-        var playerName = 'Player ' + (index + 1);
+        var playerName = 'LIBRE ';
 
         var text = addText(playerName);
 
@@ -390,14 +397,13 @@ trucoTableRender = function (context, toluca) {
         g.setAttribute('transform', translate)
 
 
-        this.speechBallon = new SpeechBallon(point, rotation);
-        $(g).append(this.speechBallon.g);
+
 
         $(g).addClass('selectable');
 
         $(g).click(function () {
             // unselect / select
-
+            //$this.speechBallon.show('Hola!');
 
             circle.setAttributeNS(null, 'fill', 'gray');
             if (table.status == 'NEW') {
@@ -499,6 +505,10 @@ trucoTableRender = function (context, toluca) {
         var cardsManager = new CardsManager($this, index, {}, point.x, point.y, rotation);
 
 
+        // Speech
+        this.speechBallon = new SpeechBallon(point, rotation);
+        $(g).append(this.speechBallon.g);
+
         g.appendChild(circle);
         g.appendChild(circle2);
         g.appendChild(text);
@@ -513,6 +523,8 @@ trucoTableRender = function (context, toluca) {
         if (user != null) {
             $(text).html(user.username);
         }
+
+
 
         return this;
 
@@ -544,18 +556,18 @@ trucoTableRender = function (context, toluca) {
                 [0, 240, 180],
             ],
             '4': [
-                [0, -200, 180],
-                [200, 0, 90],
-                [0, 200, 0],
-                [-200, 0, 270]
+                [0, -200, 0],
+                [200, 0, 270],
+                [0, 200, 180],
+                [-200, 0, 90]
             ],
             '6': [
-                [0, -250, 180],
-                [340, -150, 115],
-                [340, 150, 65],
-                [0, 250, 0],
-                [-340, 150, -65],
-                [-340, -150, -115]
+                [0, -250, 0],
+                [340, -150, -65],
+                [340, 150, -115],
+                [0, 250, 180],
+                [-340, 150, 115],
+                [-340, -150, 65]
             ]
         };
 

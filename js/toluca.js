@@ -1,9 +1,36 @@
+
 function TolucaFX (){
+    this.queue = [];
+    var fx = this;
+
+    this.next = function(){
+        var target = fx.queue.shift();
+        if (target != null){
+            console.log('play from queue', [sound.src]);
+            target.sound.play();
+        }
+    };
+    this.enqueueAndPlay = function(sound){
+        try{
+            if (fx.queue.length == 0){
+                console.log('play', [sound.src]);
+                sound.play();
+            }else{
+                fx.queue.push({target: sound});
+            }
+        }catch (e) {
+            console.log('error playing', e);
+        }
+    };
+
     function sound(src) {
         var $this = this;
         // this.sound = document.createElement("audio");
         // this.sound.src = src;
         $this.sound = new Audio();
+        $this.sound.addEventListener('ended', function(e){
+            fx.next();
+        });
         // this.sound.setAttribute("preload", "auto");
         // this.sound.setAttribute("controls", "none");
         // this.sound.style.display = "none";
@@ -13,15 +40,14 @@ function TolucaFX (){
             $this.sound.play();
             $this.sound.src = src;
         }
+
         this.play = function(){
             try{
-                $this.sound.play();
+                fx.enqueueAndPlay($this.sound);
             }
             catch (e) {
-
             }
         };
-
 
         this.stop = function(){
             try{
@@ -32,10 +58,10 @@ function TolucaFX (){
         };
     }
 
-    var tableCreated = new sound("audio/connected.wav");
+    var tableCreated = new sound("audio/checkin.wav");
     var positionSetted = new sound("audio/checkin.wav");
-    var playRequest = new sound("audio/playrequest.wav");
-    var playCard = new sound("audio/play-card.wav");
+    var playRequest = new sound("audio/connected.wav");
+    var playCard = new sound("audio/sliding-card.wav");
     var receivingCards = new sound("audio/receiving-cards.wav");
     var loaded = false;
 

@@ -645,7 +645,11 @@ trucoTableRender = function (context, toluca) {
             $this.setupButtons([]);
         }
         $this.getPlayer(event.player.id).playRequest(event);
-        tolucaFx.playRequestEffect();
+
+        setTimeout(function(){
+            tolucaFx.playRequestEffect();
+        }, 1200);
+
     };
 
     this.playEvent = function (event) {

@@ -179,12 +179,14 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
 
     this.playCard = function (data) {
         console.log('playing card', [$this.user.id, PRINCIPAL.id])
+
         if ($this.user.id == PRINCIPAL.id){
             if (tableManager.playCard($this.user, data)){
                 $(circle).removeClass('waiting');
                 return true;
             }
         }
+
         return false;
     };
 
@@ -193,7 +195,6 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     };
 
     var cardsManager = new CardsManager($this, index, {}, point.x, point.y, rotation);
-
 
     // Speech
     this.speechBallon = new SpeechBallon(point, rotation);

@@ -19,7 +19,13 @@ var setCardImage = function (svgimg, type, value) {
     svgimg.setAttributeNS('http://www.w3.org/1999/xlink', 'href', cardImageUrl(type, value));
 };
 
-var getCardAnimation = function (index) {
+var efectoFinalizado = function (index, event) {
+    console.log('efector finalizado [', index);
+    console.log(event);
+};
+
+var getCardAnimation = function (index, round) {
+    var id = "#path_" + index + '_' + round ;
     var animation = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
     animation.setAttribute('dur', '1s');
     //animation.setAttribute('begin', 'click');
@@ -27,17 +33,16 @@ var getCardAnimation = function (index) {
     animation.setAttribute('repeatCount', '1');
     animation.setAttribute('fill', 'freeze');
 
-
     var mpath = document.createElementNS('http://www.w3.org/2000/svg', 'mpath');
-    mpath.setAttributeNS("http://www.w3.org/1999/xlink", "href", "#path_" + index);
-    animation.setAttributeNS(null, "onend", "efectoFinalizado(" + index + ")");
+    mpath.setAttributeNS("http://www.w3.org/1999/xlink", "href", id);
+    animation.setAttributeNS(null, "onend", "efectoFinalizado('" + [index, round, id] + "')");
     animation.appendChild(mpath);
-
+    console.log('show animation', "#path_" + index + '_' + round);
     return animation;
 }
 
 
-var Card = function (playerManager, data) {
+var Card = function (cardsManager, playerManager, data) {
     var CARD_HEIGHT = 127;
 
     console.log('creating card', data);
@@ -58,15 +63,13 @@ var Card = function (playerManager, data) {
         try {
             if (data.played == false && data.type != null && data.value != null) {
                 data.played = true;
-                if (playerManager.playCard({
+                if (cardsManager.playCard(
+                    this,
+                    {
                     type: data.type,
                     value: data.value
                 })) {
-                    // Start effect if can be played
                     console.log('starting effect playing card *******  ');
-                    $this.repaint();
-                    tolucaFx.playCardEffect();
-                    $(animation).get(0).beginElement();
                     return;
                 }
                 data.played = false;
@@ -86,8 +89,9 @@ var Card = function (playerManager, data) {
         $(image).remove();
     };
 
-    this.show = function (eventCard) {
-        console.log('show card', eventCard);
+    this.show = function (eventCard, round) {
+        console.log('show card', [eventCard, round]);
+
         if (data.type == null && data.value == null && data.played == false) {
             $(image).addClass('played');
             image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', cardImageUrl(eventCard.type, eventCard.value));
@@ -95,16 +99,31 @@ var Card = function (playerManager, data) {
             data.played = true;
             data.type = eventCard.type;
             data.value = eventCard.value;
-            $this.repaint();
-            $(animation).get(0).beginElement();
+            $this.startAnimation(round);
+            return true;
         }
+
+        return false;
     };
+
 
     var $rot = data.num - 1;
 
     // Adding animation
-    var animation = getCardAnimation(data.index);
-    image.appendChild(animation);
+
+    this.startAnimation = function(round){
+        if (round>=0){
+            $this.repaint();
+            var animation = getCardAnimation(data.index, round);
+            image.appendChild(animation);
+            tolucaFx.playCardEffect();
+            $(animation).get(0).beginElement();
+        }else{
+            throw new Error('round is required', {
+                round:round
+            });
+        }
+    };
 
     playerManager.getTableManager().addComponent(image);
     $(image).addClass('selectable');
@@ -122,8 +141,8 @@ var Card = function (playerManager, data) {
     });
 
     image.addEventListener("mouseover", function () {
-        $this.repaint();
-        playerManager.repaint();
+        // $this.repaint();
+        // playerManager.repaint();
     });
 
     this.flip();
@@ -135,6 +154,17 @@ var CardsManager = function (playerManager, index, circle, x, y, rotation) {
 
     var $this = this;
     this.cards = [];
+    var cardsPlayed = 0;
+
+    this.playCard = function(source, data){
+        if (playerManager.playCard(data)) {
+            console.log('starting effect playing card *******  ');
+            source.startAnimation(cardsPlayed);
+            cardsPlayed++;
+            return true;
+        }
+        return false;
+    }
 
     this.showCard = function (card) {
         console.log('show card', card);
@@ -150,8 +180,9 @@ var CardsManager = function (playerManager, index, circle, x, y, rotation) {
                     // Recheck...
                     return;
                 }
-
-                $this.cards[i].show(card);
+                if ($this.cards[i].show(card, cardsPlayed)){
+                    cardsPlayed++;
+                }
                 return;
             }
             if (!$this.cards[i].data.flipped) {
@@ -161,7 +192,9 @@ var CardsManager = function (playerManager, index, circle, x, y, rotation) {
         }
         if (index > -1) {
             console.log('showing card', JSON.stringify($this.cards[index].data));
-            $this.cards[index].show(card);
+            if ($this.cards[index].show(card, cardsPlayed)){
+                cardsPlayed++;
+            }
         } else {
             console.log('WARN Card doent have showed ', card);
         }
@@ -171,7 +204,8 @@ var CardsManager = function (playerManager, index, circle, x, y, rotation) {
     this.addCard = function (playerManager, num, type, value, flipped) {
         // var card = getCardImage('basto', '1', {x:x, y:y});
         console.log('creating card', [playerManager, num, type, value, flipped, rotation]);
-        $this.cards.push(new Card(playerManager, {
+
+        $this.cards.push(new Card(this, playerManager, {
             x: x,
             y: y,
             rot: rotation,
@@ -198,6 +232,7 @@ var CardsManager = function (playerManager, index, circle, x, y, rotation) {
             $this.cards[i].remove();
         }
         $this.cards = [];
+        cardsPlayed = 0;
     };
 
 };

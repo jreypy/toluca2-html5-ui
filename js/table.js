@@ -2,10 +2,6 @@ var TrucoGamePlay = {
     PLAY_CARD: 'PLAY_CARD'
 };
 
-var efectoFinalizado = function (index, event) {
-    console.log('efector finalizado [', index);
-    console.log(event);
-};
 
 trucoTableRender = function (context, toluca) {
     console.log('creating trucoTableRender', [context, toluca]);
@@ -104,12 +100,16 @@ trucoTableRender = function (context, toluca) {
 
 
             // User Path
-            var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('id', 'path_' + i);
-            var d = 'M ' + '0 , 0' + ' L ' + 0 + ' ' + (point2.y + point1.y);
-            // console.log('d', d);
-            path.setAttributeNS(null, "d", d);
-            $(path).addClass('path');
+            for (var r =0; r<3; r++){
+                var pathId= 'path_' + i + '_' + r;
+                var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('id', pathId);
+                var d = 'M ' + '0 , 0' + ' L ' + 0 + ' ' + (point2.y + point1.y + (20+r*20));
+                // console.log('d', d);
+                path.setAttributeNS(null, "d", d);
+                $(path).addClass('path');
+                $(container).append(path);
+            }
             // // newLine.setAttribute('c', );
 
             // path.setAttribute('stroke', 'red');
@@ -117,7 +117,7 @@ trucoTableRender = function (context, toluca) {
 
             // path.setAttribute('transform',  ' translate('+H+','+K+')');
 
-            $(container).append(path);
+
         }
         // paths
     };

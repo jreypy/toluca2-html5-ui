@@ -144,6 +144,11 @@ td.free {
 .player-circle.waiting {
     animation: blink 0.8s infinite;
 }
+/*Table Card*/
+.card {
+}
+.card.played {
+}
 
 /*Table Messages*/
 .messages, .score {

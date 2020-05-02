@@ -135,11 +135,15 @@ trucoTableRender = function (context, toluca) {
         return svgimg;
     }
     var getDorsoImage = function (point) {
-        return getImage('images/cards/dorso.gif', point);
+        var dorsoImage = getImage('images/cards/dorso.gif', point);
+        $(dorsoImage).addClass('card');
+        return dorsoImage;
     };
     var getCardImage = function (type, value, points) {
         // Append image to SVG
-        return getImage('images/cards/' + (type + '').toLowerCase() + '/' + value + '.gif', points);
+        var cardImage = getImage('images/cards/' + (type + '').toLowerCase() + '/' + value + '.gif', points);
+        $(cardImage).addClass('card');
+        return cardImage;
     };
 
     var SpeechBallon = function (point, rotation) {
@@ -149,7 +153,7 @@ trucoTableRender = function (context, toluca) {
         var ballon = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         ballon.setAttribute('id', 'speech_ballon');
         //var d = 'M 20 20 -50 -100 100 0Z';
-        var d = 'M '+(radious)+' '+(radious)+' -15 -200 '+(radious + (radious+15))+' -200Z';
+        var d = 'M ' + (radious) + ' ' + (radious) + ' -15 -200 ' + (radious + (radious + 15)) + ' -200Z';
         ballon.setAttributeNS(null, "d", d);
         ballon.setAttributeNS(null, "fill", "yellow");
         ballon.setAttributeNS(null, "fill-rule", "evenodd");
@@ -170,10 +174,9 @@ trucoTableRender = function (context, toluca) {
         // card.setAttribute('transform', transform);
 
 
-
         var text = createText({x: 40, y: -220}, 'Hola!', 'blue');
 
-        g.setAttributeNS(null, "transform", "rotate (" + (rotation) + ", "+radious+", "+radious+")");
+        g.setAttributeNS(null, "transform", "rotate (" + (rotation) + ", " + radious + ", " + radious + ")");
         text.setAttributeNS(null, "transform", "rotate (" + (rotationText) + ", 40, -220)");
 
         $(g).append(text);
@@ -216,11 +219,19 @@ trucoTableRender = function (context, toluca) {
         };
         this.showCard = function (card) {
             console.log('show card', card);
-            var index = 0;
+            var index = -1;
+
             for (var i in $this.cards) {
                 if ($this.cards[i].data.type == card.type && $this.cards[i].data.value == card.value) {
                     $this.cards[i].data.type = null;
                     $this.cards[i].data.value = null;
+                    console.log('showing card', JSON.stringify($this.cards[i].data));
+
+                    if ($this.cards[i].flipped) {
+                        // Recheck...
+                        return;
+                    }
+
                     $this.cards[i].show(card);
                     return;
                 }
@@ -228,16 +239,21 @@ trucoTableRender = function (context, toluca) {
                     // Show Card no played before
                     index = i;
                 }
-
             }
-            console.log('show card', JSON.stringify($this.cards[index].data));
-            $this.cards[index].show(card);
+
+            if (index > -1) {
+                console.log('showing card', JSON.stringify($this.cards[index].data));
+                $this.cards[index].show(card);
+            } else {
+                console.log('WARN Card doent have showed ', card);
+            }
 
         };
         this.card = function (data) {
             console.log('creating card', data);
             var $this = this;
             $this.data = data;
+            $this.data.played = false;
             console.log('add card', data);
             var card = getDorsoImage({x: H + data.x, y: K - data.y});
 
@@ -254,7 +270,7 @@ trucoTableRender = function (context, toluca) {
                         type: data.type,
                         value: data.value
                     })) {
-                        console.log('start effect');
+                        console.log('starting effect playing card *******  ');
                         $this.repaint();
                         tolucaFx.playCardEffect();
                         $(animation).get(0).beginElement();
@@ -267,23 +283,24 @@ trucoTableRender = function (context, toluca) {
                 $(card).remove();
                 container.append(card);
             };
+
             this.remove = function () {
                 $(card).remove();
             };
 
             this.show = function (eventCard) {
                 console.log('show card', eventCard);
-                if (data.type == null && data.value == null) {
+                if (data.type == null && data.value == null && data.played == false) {
+                    $(card).addClass('played');
                     card.setAttributeNS('http://www.w3.org/1999/xlink', 'href', cardImageUrl(eventCard.type, eventCard.value));
                     data.flipped = true;
+                    data.played = true;
                     data.type = eventCard.type;
                     data.value = eventCard.value;
                     $this.repaint();
                     $(animation).get(0).beginElement();
                 }
-
             };
-
             // var card = getCircle(H+data.x, K-data.y, 20);
             var $rot = data.num - 1;
             $(card).addClass('selectable');
@@ -313,7 +330,7 @@ trucoTableRender = function (context, toluca) {
             //' translate('+H+','+K+')  '
 
 
-            var translate = 'translate(' + (radious * -1) + ',' + (-1*CARD_HEIGHT) + ') '
+            var translate = 'translate(' + (radious * -1) + ',' + (-1 * CARD_HEIGHT) + ') '
             var rotate = ' rotate(' + (data.rot + $rot * 20) + ',' + (H + data.x + radious) + ',' + (K - data.y + CARD_HEIGHT) + ')';
             var transform = translate + ' ' + rotate;
             // console.log('rotation', [data.index,transform]);
@@ -322,9 +339,20 @@ trucoTableRender = function (context, toluca) {
             $(card).addClass('card');
 
             card.addEventListener("click", function () {
-                console.log('flip card');
+                console.log('================')
+                console.log('================')
+
+                console.log('playing card!!!!', {
+                    type: data.type,
+                    value: data.value
+                });
+
+
                 $this.play();
+                console.log('================')
+                console.log('================')
             });
+
             card.addEventListener("mouseover", function () {
                 $this.repaint();
                 playerManager.repaint();
@@ -397,8 +425,6 @@ trucoTableRender = function (context, toluca) {
         g.setAttribute('transform', translate)
 
 
-
-
         $(g).addClass('selectable');
 
         $(g).click(function () {
@@ -460,6 +486,7 @@ trucoTableRender = function (context, toluca) {
 
         this.playEvent = function (event) {
             console.log('== play event', event);
+
             if (event.eventName == TrucoGamePlay.PLAY_CARD) {
                 tolucaFx.playCardEffect();
                 cardsManager.showCard(event.card);
@@ -471,18 +498,18 @@ trucoTableRender = function (context, toluca) {
                 //alert($this.user.username + ' dice: ' + event.text);
                 var speech = event.eventName;
 
-                if (event.eventName == 'SAY_ENVIDO_VALUE'){
+                if (event.eventName == 'SAY_ENVIDO_VALUE') {
                     speech = event.text;
                 }
                 console.log('request play speech', [event, speech]);
 
                 var speecher = 'm';
-                if (index%2 == 1){
+                if (index % 2 == 1) {
                     speecher = 'f';
                 }
 
                 tolucaFx.playSpeech({
-                    name : speecher
+                    name: speecher
                 }, speech);
 
                 $this.speechBallon.show(event.text);
@@ -523,7 +550,6 @@ trucoTableRender = function (context, toluca) {
         if (user != null) {
             $(text).html(user.username);
         }
-
 
 
         return this;
@@ -662,9 +688,9 @@ trucoTableRender = function (context, toluca) {
         }
         $this.getPlayer(event.player.id).playRequest(event);
 
-        setTimeout(function(){
+        setTimeout(function () {
             tolucaFx.playRequestEffect();
-        }, 1200);
+        }, 2000);
 
     };
 
@@ -694,7 +720,7 @@ trucoTableRender = function (context, toluca) {
         }
 
         $this.setupButtons([{
-            type:'COTINUAR_MANO',
+            type: 'COTINUAR_MANO',
             text: 'Continuar'
         }]);
 
@@ -867,10 +893,10 @@ trucoTableRender = function (context, toluca) {
     this.playOption = function (option) {
         console.log('play option', option);
         // Remove Buttons
-        if (option.type == 'COTINUAR_MANO'){
+        if (option.type == 'COTINUAR_MANO') {
             $this.setupButtons([]);
             $this.startHand();
-        }else{
+        } else {
             $('#buttons').find('.btn').remove();
             $this.play({
                 type: option.type,
@@ -887,7 +913,6 @@ trucoTableRender = function (context, toluca) {
         } catch (e) {
             console.log(e);
         }
-
         var playRequestPlayer = $this.playRequestPlayer;
         if (playRequestPlayer != null && playRequestPlayer.id == PRINCIPAL.id) {
             toluca.play(context.table.roomId, context.table.id, data);

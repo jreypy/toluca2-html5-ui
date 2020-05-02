@@ -195,6 +195,8 @@ trucoTableRender = function (context, toluca) {
 
 
     var CardsManager = function (playerManager, index, circle, x, y, rotation) {
+        var CARD_HEIGHT = 127;
+
         console.log('creating cards manaager  ', [playerManager, circle, x, y, rotation]);
 
         var $this = this;
@@ -302,8 +304,10 @@ trucoTableRender = function (context, toluca) {
             container.append(card);
             // console.log('data', data);
             //' translate('+H+','+K+')  '
-            var translate = 'translate(' + (radious * -1) + ',' + 0 + ') '
-            var rotate = ' rotate(' + (data.rot + $rot * 20) + ',' + (H + data.x + radious) + ',' + (K - data.y) + ')';
+
+
+            var translate = 'translate(' + (radious * -1) + ',' + (-1*CARD_HEIGHT) + ') '
+            var rotate = ' rotate(' + (data.rot + $rot * 20) + ',' + (H + data.x + radious) + ',' + (K - data.y + CARD_HEIGHT) + ')';
             var transform = translate + ' ' + rotate;
             // console.log('rotation', [data.index,transform]);
             card.setAttribute('transform', transform);
@@ -536,8 +540,8 @@ trucoTableRender = function (context, toluca) {
         $(container).find('.path').remove();
         var pos = {
             '2': [
-                [0, -240, 180],
-                [0, 240, 0],
+                [0, -240, 0],
+                [0, 240, 180],
             ],
             '4': [
                 [0, -200, 180],

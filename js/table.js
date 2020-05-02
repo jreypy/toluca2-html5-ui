@@ -53,18 +53,18 @@ trucoTableRender = function (context, toluca) {
                 [0, 240, 180],
             ],
             '4': [
-                [0, -300, 0],
+                [100, -240, 0],
                 [300, 0, 270],
-                [0, 320, 180],
-                [-320, 0, 90]
+                [100, 240, 180],
+                [-120, 0, 90]
             ],
             '6': [
-                [0, -250, 0],
+                [100, -240, 0],
                 [340, -150, -65],
                 [340, 150, -115],
-                [0, 250, 180],
-                [-340, 150, 115],
-                [-340, -150, 65]
+                [100, 240, 180],
+                [-140, 150, 115],
+                [-140, -150, 65]
             ]
         };
 
@@ -106,16 +106,17 @@ trucoTableRender = function (context, toluca) {
             // User Path
             var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('id', 'path_' + i);
-            var d = 'M ' + '0 , 0' + ' L ' + (point2.x - point1.x - 100) + ' ' + (point2.y + point1.y);
+            var d = 'M ' + '0 , 0' + ' L ' + 0 + ' ' + (point2.y + point1.y);
             // console.log('d', d);
             path.setAttributeNS(null, "d", d);
+            $(path).addClass('path');
             // // newLine.setAttribute('c', );
 
             // path.setAttribute('stroke', 'red');
             // path.setAttribute('stroke-width', '2');
 
             // path.setAttribute('transform',  ' translate('+H+','+K+')');
-            $(path).addClass('path');
+
             $(container).append(path);
         }
         // paths
@@ -291,7 +292,7 @@ trucoTableRender = function (context, toluca) {
         }
     };
 
-    this.size = 6;
+    this.size = 4;
     this.players = [];
     this.render(this.size, [null, null, null, null, null, null], 0);
 

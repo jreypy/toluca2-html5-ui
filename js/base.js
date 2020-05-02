@@ -1,5 +1,5 @@
-var H = 400;
-var K = 300;
+var H = 200;
+var K = 280;
 var RADIO = 40;
 var radious = RADIO;
 var svgns = "http://www.w3.org/2000/svg";

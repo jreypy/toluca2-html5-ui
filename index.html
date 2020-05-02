@@ -63,9 +63,11 @@
         var render = {
             connectionClosed: function (event) {
                 var username = localStorage.getItem('username');
-                render.gotoRooms();
-                alert('Reconectando... [' + username + ']');
-                window.location.reload(true);
+                if (username != null){
+                    render.gotoRooms();
+                    console.log('reconnecting........');
+                    window.location.reload(true);
+                }
             },
             updateRooms: function (rooms) {
                 $('.sub-container').hide();

@@ -292,7 +292,7 @@ trucoTableRender = function (context, toluca) {
         }
     };
 
-    this.size = 4;
+    this.size = 6;
     this.players = [];
     this.render(this.size, [null, null, null, null, null, null], 0);
 

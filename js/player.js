@@ -95,7 +95,6 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     });
 
 
-
     this.setPlayer = function (player, fire) {
         $this.player = player;
         // $(g).find('text').remove();
@@ -127,6 +126,7 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
 
     this.receivingCards = function (user, cards) {
         console.log('playermanger receiving cards', [$this.user.id, cards, rotation])
+        cardsManager.cleanCards();
         for (var i in cards) {
             cardsManager.addCard(this, i, cards[i].type, cards[i].value, PRINCIPAL.id == $this.user.id, rotation);
         }
@@ -142,9 +142,13 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     this.playEvent = function (event) {
         console.log('== play event', event);
 
+
         if (event.eventName == TrucoGamePlay.PLAY_CARD) {
             tolucaFx.playCardEffect();
             cardsManager.showCard(event.card);
+        }
+        else if (event.eventName == 'PLAYER_READY'){
+            $(circle).removeClass('waiting');
         }
         else if (event.eventName == '') {
 
@@ -175,8 +179,12 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
 
     this.playCard = function (data) {
         console.log('playing card', [$this.user.id, PRINCIPAL.id])
-        if ($this.user.id == PRINCIPAL.id)
-            return tableManager.playCard($this.user, data);
+        if ($this.user.id == PRINCIPAL.id){
+            if (tableManager.playCard($this.user, data)){
+                $(circle).removeClass('waiting');
+                return true;
+            }
+        }
         return false;
     };
 

@@ -164,7 +164,7 @@ trucoTableRender = function (context, toluca) {
 
         setTimeout(function () {
             tolucaFx.playRequestEffect();
-        }, 2000);
+        }, 2500);
 
     };
 
@@ -192,7 +192,7 @@ trucoTableRender = function (context, toluca) {
             var $message = $('<p>' + event.messages[i].text + '</p>');
             $(tableContainer).find('.messages').append($message);
         }
-
+        $(container).find('.player-circle').addClass('waiting');
         $this.setupButtons([{
             type: 'COTINUAR_MANO',
             text: 'Continuar'
@@ -386,9 +386,11 @@ trucoTableRender = function (context, toluca) {
             console.log(e);
         }
         var playRequestPlayer = $this.playRequestPlayer;
+
         if (playRequestPlayer != null && playRequestPlayer.id == PRINCIPAL.id) {
             toluca.play(context.table.roomId, context.table.id, data);
             $('#buttons').find('.btn').remove();
+            $(container).find('.player-circle').removeClass('waiting');
             $this.playRequestPlayer = null;
             return true;
         } else {

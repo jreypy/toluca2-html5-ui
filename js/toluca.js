@@ -60,7 +60,7 @@ function TolucaFX (){
 
     var tableCreated = new sound("audio/checkin.wav");
     var positionSetted = new sound("audio/checkin.wav");
-    var playRequest = new sound("audio/connected.wav");
+    var playRequest = new sound("audio/next-request.wav");
     var playCard = new sound("audio/sliding-card.wav");
     var receivingCards = new sound("audio/receiving-cards.wav");
     var loaded = false;
@@ -272,7 +272,7 @@ function TolucaFX (){
             }
 
         }
-    }
+    };
 
     this.tableCreatedEffect = function(){
         tableCreated.play();

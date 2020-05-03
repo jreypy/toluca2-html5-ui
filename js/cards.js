@@ -43,7 +43,7 @@ var getCardAnimation = function (index, round) {
 
 
 var Card = function (cardsManager, playerManager, data) {
-    var CARD_HEIGHT = 127;
+    var CARD_HEIGHT = 80;
 
     console.log('creating card', data);
     var $this = this;
@@ -129,7 +129,7 @@ var Card = function (cardsManager, playerManager, data) {
     $(image).addClass('selectable');
 
     var translate = 'translate(' + (radious * -1) + ',' + (-1 * CARD_HEIGHT) + ') '
-    var rotate = ' rotate(' + (data.rot + $rot * 20) + ',' + (H + data.x + radious) + ',' + (K - data.y + CARD_HEIGHT) + ')';
+    var rotate = 'rotate(' + (data.rot + $rot * 40) + ',' + (H + data.x + radious) + ',' + (K - data.y + CARD_HEIGHT) + ')';
     var transform = translate + ' ' + rotate;
 
     image.setAttribute('transform', transform);

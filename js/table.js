@@ -104,7 +104,7 @@ trucoTableRender = function (context, toluca) {
                 var pathId= 'path_' + i + '_' + r;
                 var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('id', pathId);
-                var d = 'M ' + '0 , 0' + ' L ' + 0 + ' ' + (point2.y + point1.y + (20+r*20));
+                var d = 'M ' + '0  0' + ' L ' + 0 + ' ' + (point1.y-point2.y)/(Math.abs(point1.y-point2.y))*(160-r*20);
                 // console.log('d', d);
                 path.setAttributeNS(null, "d", d);
                 $(path).addClass('path');

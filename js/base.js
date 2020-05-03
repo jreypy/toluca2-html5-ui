@@ -69,8 +69,10 @@ var Button = function (index, text, clazz, action, param) {
     $(g).addClass(clazz);
     $(g).addClass('btn');
 
+    var h = parseInt((index%4) ) * 110 + 10;
+    var k = parseInt((index/4)) * 60 ;
 
-    var translate = 'translate(' + (index * 110 + 10) + ',0)'
+    var translate = 'translate(' + h + ','+ k +')'
     g.setAttribute('transform', translate)
 
     $('#buttons').get(0).appendChild(g);

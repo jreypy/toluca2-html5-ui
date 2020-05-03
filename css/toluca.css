@@ -147,6 +147,9 @@ td.free {
 /*Table Card*/
 .card {
 }
+.card {
+    height: 100px;
+}
 .card.played {
 }
 

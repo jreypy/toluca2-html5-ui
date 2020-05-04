@@ -2,6 +2,7 @@ var TrucoGamePlay = {
     PLAY_CARD: 'PLAY_CARD'
 };
 
+var INITIAL_SIZE = 6;
 
 trucoTableRender = function (context, toluca) {
     console.log('creating trucoTableRender', [context, toluca]);
@@ -43,6 +44,23 @@ trucoTableRender = function (context, toluca) {
         $(container).find('.player').remove();
         $(container).find('.card').remove();
         $(container).find('.path').remove();
+        var tableImage = {
+            '2': function(){
+                var circle = getCircle(H, K, 200, '#855E42');
+                container.appendChild(circle);
+                return circle;
+            },
+            '4': function(){
+                var circle = getCircle(H+100, K, 200, '#855E42');
+                container.appendChild(circle);
+                return circle;
+            },
+            '6': function(){
+                var circle = getCircle(H+100, K, 200, '#855E42');
+                container.appendChild(circle);
+                return circle;
+            }
+        }
         var pos = {
             '2': [
                 [0, -240, 0],
@@ -50,9 +68,9 @@ trucoTableRender = function (context, toluca) {
             ],
             '4': [
                 [100, -240, 0],
-                [300, 0, 270],
+                [340, 0, 270],
                 [100, 240, 180],
-                [-120, 0, 90]
+                [-140, 0, 90]
             ],
             '6': [
                 [100, -240, 0],
@@ -87,6 +105,8 @@ trucoTableRender = function (context, toluca) {
 
         $this.players = [];
         $this.playRequestPlayer = null;
+
+        tableImage[size]();
 
         for (var i = 0; i < dis.length; i++) {
 
@@ -292,7 +312,7 @@ trucoTableRender = function (context, toluca) {
         }
     };
 
-    this.size = 6;
+    this.size = INITIAL_SIZE;
     this.players = [];
     this.render(this.size, [null, null, null, null, null, null], 0);
 

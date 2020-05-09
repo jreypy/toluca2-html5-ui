@@ -52,45 +52,57 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     var $this = this;
     this.user = user;
 
-    var circle = getCircle(radious, radious, radious);
-    $(circle).addClass('free');
+    var circle = getCircle(radious, radious, radious*0.5, 'yellow');
+    var innerCircle = getCircle(radious, radious, radious*0.4, 'yellow');
+    $(innerCircle).addClass('inner-circle');
+
 
     console.log('playerIndex', playerIndex);
 
-    if (index % 2 == playerIndex % 2) {
-        $(circle).addClass('team1');
-    } else {
-        $(circle).addClass('team2');
-    }
+    var chair = getChair(radious, radious);
+    var translate = ' rotate (' + rotation + ',' + radious + ',' + radious + ')';
+    chair.setAttribute('transform', translate)
 
-    var circle2 = getCircle(radious, radious, radious - 8, 'white');
+    // add Chair
+
 
     var g = getG();
+    var playerG = getG();
+    $(playerG).addClass('free');
+
+
+    if (index%2 == 0){
+        $(chair).addClass('team1');
+        $(playerG).addClass('team1');
+    }else{
+        $(chair).addClass('team2');
+        $(playerG).addClass('team2');
+    }
+
     var playerName = 'LIBRE ';
 
     var text = addText(playerName);
 
     text.setAttributeNS(null, 'x', radious);
-    text.setAttributeNS(null, 'y', radious);
+    text.setAttributeNS(null, 'y', radious*2);
     text.setAttributeNS(null, 'text-anchor', 'middle');
     text.setAttributeNS(null, 'dominant-baseline', 'middle');
 
 
     var translate = 'translate(' + (H + point.x - radious) + ',' + (K - point.y - radious) + ') '
     g.setAttribute('transform', translate)
-
+    playerG.setAttribute('transform', translate);
 
     $(g).addClass('selectable');
 
     $(g).click(function () {
         // unselect / select
-        //$this.speechBallon.show('Hola!');
-        circle.setAttributeNS(null, 'fill', 'gray');
 
+        //$(circle).removeClass('free');
         if (table.status == 'NEW') {
             toluca.setTablePosition(table.roomId, table.id, index);
         } else {
-            console.log('position no selected', [index, table]);
+            console.log('position no selected', [table.status, index, table]);
         }
     });
 
@@ -98,25 +110,31 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     this.setPlayer = function (player, fire) {
         $this.player = player;
         // $(g).find('text').remove();
-        $(circle).addClass('free');
+        // $(circle).addClass('free');
+        // $this.speechBallon.show('Hola!');
+        $(playerG).remove();
 
         if (player == null) {
-            circle.setAttributeNS(null, 'fill', 'gray');
+            //circle.setAttributeNS(null, 'fill', 'green');
             // var text = addText('Player ' + (index + 1));
             // text.innerText = 'Player '+ (index+1);
+            $(playerG).addClass('free');
             $(text).html('Libre');
             // g.appendChild(text);
         }
         else if (fire) {
             // var text = addText(player.username);
+            $(playerG).removeClass('free');
             $(text).html(player.username);
             // g.appendChild(text);
         } else {
             // var text = addText(player.username);
             // text.innerText = player.username;
+            $(playerG).removeClass('free');
             $(text).html(player.username);
             // g.appendChild(text);
         }
+        tableManager.addComponent(playerG);
 
     };
     this.cleanCards = function () {
@@ -127,16 +145,17 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     this.receivingCards = function (user, cards) {
         console.log('playermanger receiving cards', [$this.user.id, cards, rotation])
         cardsManager.cleanCards();
+        tableManager.addComponent(g);
         for (var i in cards) {
             cardsManager.addCard(this, i, cards[i].type, cards[i].value, PRINCIPAL.id == $this.user.id, rotation);
         }
-        tableManager.addComponent(g);
+        //
     };
 
     this.playRequest = function (event) {
         console.log('play requested');
         $(tableManager.getContainer()).find('.waiting').removeClass('waiting');
-        $(circle).addClass('waiting');
+        $(playerG).addClass('waiting');
     };
 
     this.playEvent = function (event) {
@@ -190,9 +209,7 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
         return false;
     };
 
-    this.repaint = function () {
-        tableManager.addComponent(g);
-    };
+
 
     var cardsManager = new CardsManager($this, index, {}, point.x, point.y, rotation);
 
@@ -200,26 +217,46 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     this.speechBallon = new SpeechBallon(point, rotation);
     $(g).append(this.speechBallon.g);
 
-    g.appendChild(circle);
-    g.appendChild(circle2);
-    g.appendChild(text);
+
+    g.appendChild(chair);
+    playerG.appendChild(circle);
+    playerG.appendChild(innerCircle);
+    playerG.appendChild(text);
+
 
 
     $(g).addClass('player');
-    $(circle).addClass('player-circle');
+    $(playerG).addClass('player-circle');
 
 
 
     if (user != null) {
         $(text).html(user.username);
+        $(playerG).removeClass('free');
     }
 
     this.getComponent = function(){
         return g;
     };
+    this.addComponent = function(image){
+        $(playerG).remove();
+        tableManager.addComponent(image);
+        tableManager.addComponent(playerG);
 
+    }
     this.getTableManager = function(){
         return tableManager;
+    };
+
+    this.paint = function () {
+        tableManager.addComponent(g);
+        tableManager.addComponent(playerG);
+    };
+
+    this.repaint = function () {
+        $(g).remove();
+        $(playerG).remove();
+        $this.paint();
     };
 
     return this;

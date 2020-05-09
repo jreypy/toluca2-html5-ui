@@ -82,7 +82,7 @@ var Card = function (cardsManager, playerManager, data) {
 
     this.repaint = function () {
         $(image).remove();
-        playerManager.getTableManager().addComponent(image);
+        playerManager.addComponent(image);
     };
 
     this.remove = function () {
@@ -125,7 +125,7 @@ var Card = function (cardsManager, playerManager, data) {
         }
     };
 
-    playerManager.getTableManager().addComponent(image);
+    playerManager.addComponent(image);
     $(image).addClass('selectable');
 
     var translate = 'translate(' + (radious * -1) + ',' + (-1 * CARD_HEIGHT) + ') '

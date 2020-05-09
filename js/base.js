@@ -2,31 +2,30 @@ var H = 200;
 var K = 280;
 var RADIO = 40;
 var radious = RADIO;
+var WOODEN = '#855E42'
 var svgns = "http://www.w3.org/2000/svg";
 
-var getG = function () {
+var createG = function (w, h) {
     var g = document.createElementNS(svgns, 'g');
-    g.setAttributeNS(null, 'width', radious * 2);
-    g.setAttributeNS(null, 'height', radious * 2);
-    // width="200" height="100"
-    //circle.setAttribute('transform',  ' translate(400,250)');
+    g.setAttributeNS(null, 'width', w);
+    g.setAttributeNS(null, 'height', g);
     return g;
+};
+
+var getG = function () {
+    return createG(radious * 2, radious * 2);
 };
 
 
 var getRect = function (x, y, w, h, color) {
-
     var element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-
     element.setAttributeNS(null, 'x', x);
     element.setAttributeNS(null, 'y', y);
     element.setAttributeNS(null, 'width', w);
     element.setAttributeNS(null, 'height', h);
-    element.setAttributeNS(null, 'rx', 15);
-    element.setAttributeNS(null, 'ry', 15);
+    element.setAttributeNS(null, 'rx', 10);
+    element.setAttributeNS(null, 'ry', 10);
     element.setAttributeNS(null, 'fill', color);
-
-
     return element;
 };
 
@@ -97,6 +96,7 @@ var getCircle = function (x, y, r, color) {
     //circle.setAttribute('transform',  ' translate(400,250)');
     return circle;
 };
+
 var getImage = function (imageName, point) {
     var svgimg = document.createElementNS('http://www.w3.org/2000/svg', 'image');
     // svgimg.setAttributeNS(null,'height','200');
@@ -110,4 +110,16 @@ var getImage = function (imageName, point) {
     svgimg.setAttributeNS(null, 'visibility', 'visible');
     $('svg').append(svgimg);
     return svgimg;
-}
+};
+
+
+var getChair = function (x, y) {
+    var g = createG(radious, radious);
+    // g.appendChild(getCircle(x,y,radious, 'yellow'));
+    g.appendChild(getRect(0,0, radious*2, radious*2-25, WOODEN));
+    g.appendChild(getRect(0,radious*2-20, radious*2, 20, WOODEN));
+    var pillow = getRect(5,5, radious*2-10, radious*2-35, 'yellow');
+    $(pillow).addClass('pillow');
+    g.appendChild(pillow);
+    return g;
+};

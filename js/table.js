@@ -41,22 +41,29 @@ trucoTableRender = function (context, toluca) {
     };
 
     this.render = function (size, users, playerIndex) {
+        if ($this.tableImage != null){
+            $($this.tableImage).remove();
+        }
+        $(container).find('.table').remove();
+        $(container).find('.chair').remove();
         $(container).find('.player').remove();
         $(container).find('.card').remove();
         $(container).find('.path').remove();
+        $(container).find('.player-circle').remove();
+
         var tableImage = {
             '2': function(){
-                var circle = getCircle(H, K, 200, '#855E42');
+                var circle = getCircle(H, K, 200, WOODEN);
                 container.appendChild(circle);
                 return circle;
             },
             '4': function(){
-                var circle = getCircle(H+100, K, 200, '#855E42');
+                var circle = getCircle(H+100, K, 200, WOODEN);
                 container.appendChild(circle);
                 return circle;
             },
             '6': function(){
-                var circle = getCircle(H+100, K, 200, '#855E42');
+                var circle = getCircle(H+100, K, 200, WOODEN);
                 container.appendChild(circle);
                 return circle;
             }
@@ -106,7 +113,8 @@ trucoTableRender = function (context, toluca) {
         $this.players = [];
         $this.playRequestPlayer = null;
 
-        tableImage[size]();
+        $this.tableImage = tableImage[size]();
+        $($this.tableImage).addClass('table');
 
         for (var i = 0; i < dis.length; i++) {
 
@@ -116,7 +124,8 @@ trucoTableRender = function (context, toluca) {
 
             var playerManager = new PlayerManager(this, i, point1, dis[i][2], users[i], playerIndex);
             $this.players[i] = playerManager;
-            container.appendChild(playerManager.getComponent());
+            //container.appendChild(playerManager.getComponent());
+            playerManager.paint();
 
 
             // User Path

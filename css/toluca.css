@@ -117,14 +117,33 @@ td.free {
     stroke-linejoin: miter;
     stroke-opacity: 1;
 }
+.player-circle {
+    display: block;
+}
+.pillow {
+    opacity: 0.3;
+}
+.player-circle.free, .player-circle.free {
+    display: none;
+}
 
-.player .team1 {
+.team1 .pillow, .player-circle.team1 .inner-circle {
     fill: red;
 }
 
-.player .team2 {
+.team2 .pillow, .player-circle.team2 .inner-circle {
     fill: blue;
 }
+
+
+/*.player .team1 {*/
+    /*fill: black;*/
+/*}*/
+
+/*.player .team2 {*/
+    /*fill: black;*/
+/*}*/
+
 
 .player .free .table-text {
     fill: gray;

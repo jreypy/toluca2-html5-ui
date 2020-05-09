@@ -93,6 +93,14 @@ td.free {
 }
 
 /*Buttons*/
+.new-table-message{
+    display: none;
+}
+.table-status-new .new-table-message{
+    display: block;
+}
+
+
 .table-buttons .text {
     /*font-weight: bold;*/
     /*text-transform: uppercase;*/

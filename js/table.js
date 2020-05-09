@@ -14,6 +14,9 @@ trucoTableRender = function (context, toluca) {
     var container = document.getElementById('table-screen');
     var tableContainer = $('.container-table');
 
+
+
+
     var table = context.table;
     this.showStartButton = table.owner.username == PRINCIPAL.username;
 
@@ -41,6 +44,7 @@ trucoTableRender = function (context, toluca) {
     };
 
     this.render = function (size, users, playerIndex) {
+
         if ($this.tableImage != null){
             $($this.tableImage).remove();
         }
@@ -115,6 +119,16 @@ trucoTableRender = function (context, toluca) {
 
         $this.tableImage = tableImage[size]();
         $($this.tableImage).addClass('table');
+
+
+        var textTable1 = createText({x:H-150, y:K-20},'1. Seleccione una silla haciendo click', 'yellow');
+        var textTable2 = createText({x:H-150, y:K+20},'2. Los equipos deben tener la misma cantidad de Jugadores para ser Iniciado', 'yellow');
+
+        container.appendChild(textTable1);
+        container.appendChild(textTable2);
+
+        $(textTable1).addClass('new-table-message');
+        $(textTable2).addClass('new-table-message');
 
         for (var i = 0; i < dis.length; i++) {
 
@@ -328,6 +342,8 @@ trucoTableRender = function (context, toluca) {
 
     this.setStatus = function (status) {
         $this.status = status;
+        $(container).removeClass('table-status-new');
+        $(container).addClass('table-status-'+($this.status+'').toLowerCase());
     };
 
     this.setupButtons = function (options) {

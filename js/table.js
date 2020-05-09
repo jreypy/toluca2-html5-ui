@@ -316,13 +316,13 @@ trucoTableRender = function (context, toluca) {
 
 
     this.handStarted = function (event) {
-        $this.cleanCards();
         $(tableContainer).find('.messages').find('p').remove();
     };
 
 
     this.receivingCards = function (event) {
         if (event.player.id == PRINCIPAL.id) {
+            $this.cleanCards();
             for (i in $this.players) {
                 console.log('giving cards to user ', [i, event.cards])
                 if ($this.players[i].user.id == PRINCIPAL.id) {
@@ -331,6 +331,7 @@ trucoTableRender = function (context, toluca) {
                 } else {
                     $this.players[i].receivingCards(event.player, [{}, {}, {}]);
                 }
+
             }
         }
     };

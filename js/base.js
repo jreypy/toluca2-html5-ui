@@ -3,6 +3,7 @@ var K = 280;
 var RADIO = 40;
 var radious = RADIO;
 var WOODEN = '#855E42'
+var TABLE_COLOR = 'green'
 var svgns = "http://www.w3.org/2000/svg";
 
 var createG = function (w, h) {

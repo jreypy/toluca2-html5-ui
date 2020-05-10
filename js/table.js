@@ -159,13 +159,16 @@ trucoTableRender = function (context, toluca) {
                 var d = 'M ' + '0  0' + ' L ' + 0 + ' ' + (point1.y-point2.y)/(Math.abs(point1.y-point2.y))*(160-r*20);
                 // console.log('d', d);
                 path.setAttributeNS(null, "d", d);
+
+                // path.setAttribute('stroke', 'red');
+                // path.setAttribute('stroke-width', '2');
+
                 $(path).addClass('path');
                 $(container).append(path);
             }
             // // newLine.setAttribute('c', );
 
-            // path.setAttribute('stroke', 'red');
-            // path.setAttribute('stroke-width', '2');
+
 
             // path.setAttribute('transform',  ' translate('+H+','+K+')');
 

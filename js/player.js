@@ -1,23 +1,33 @@
-var SpeechBallon = function (point, rotation) {
+var SpeechBallon = function (point, rotation, container) {
 
     var g = getG();
 
     var ballon = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     ballon.setAttribute('id', 'speech_ballon');
     //var d = 'M 20 20 -50 -100 100 0Z';
-    var d = 'M ' + (radious) + ' ' + (radious) + ' -15 -200 ' + (radious + (radious + 15)) + ' -200Z';
+    var d = 'M ' + (H) + ' ' + (K+230) + ' ' + (H-30) + ' ' + K + ' ' + (H+30) + ' ' + K + 'Z';
     ballon.setAttributeNS(null, "d", d);
+    ballon.setAttributeNS(null, "fill", "yellow");
     ballon.setAttributeNS(null, "fill", "yellow");
     ballon.setAttributeNS(null, "fill-rule", "evenodd");
     ballon.setAttributeNS(null, "clip-rule", "evenodd");
 
+    ballon.setAttribute('stroke', 'blue');
+    ballon.setAttribute('stroke-width', '2');
+
+
     //translate('+(point.x-297)+','+(point.y-H+277)+')
 
     $(g).append(ballon);
-    var circle = getCircle(40, -220, 180, 'yellow');
+    var circle = getCircle(H, K, 150, 'yellow');
+
+    circle.setAttribute('stroke', 'blue');
+    circle.setAttribute('stroke-width', '2');
+
+
     $(g).append(circle);
 
-    var rotationText = rotation;
+    var rotationText = 360-rotation;
 
     // var translate = 'translate(' + (radious * -1) + ',' + (-1*CARD_HEIGHT) + ') '
     // var rotate = ' rotate(' + (data.rot + $rot * 20) + ',' + (H + data.x + radious) + ',' + (K - data.y + CARD_HEIGHT) + ')';
@@ -26,21 +36,30 @@ var SpeechBallon = function (point, rotation) {
     // card.setAttribute('transform', transform);
 
 
-    var text = createText({x: 40, y: -220}, 'Hola!', 'blue');
+    var text = createText({x: H, y: K}, 'Hola!', 'blue');
+    text.setAttributeNS(null, 'text-anchor', 'middle');
+    text.setAttributeNS(null, 'dominant-baseline', 'middle');
+
 
     //g.setAttributeNS(null, "transform", "rotate (" + (rotation) + ", " + radious + ", " + radious + ")");
-    text.setAttributeNS(null, "transform", "rotate (" + (rotationText) + ", 40, -220)");
+    text.setAttributeNS(null, "transform", "rotate (" + (rotationText) + ", "+H+", "+K+")");
 
     $(g).append(text);
     $(g).addClass('speech-ballon');
 
     this.show = function (message) {
+        $(g).remove();
+        // GO TO TOP
+        $(container).append(g);
+
         $(text).text(message);
         $(g).addClass('show');
+
         setTimeout(function () {
             $(g).removeClass('show');
         }, 2000)
-    }
+    };
+
     this.g = g;
 
     return this;
@@ -115,6 +134,8 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     $(playerContainer).click(function () {
         // unselect / select
         //$(circle).removeClass('free');
+        $this.speechBallon.show('Hola!');
+
         if (table.status == 'NEW') {
             toluca.setTablePosition(table.roomId, table.id, index);
         } else {
@@ -127,7 +148,6 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
         $this.player = player;
         // $(g).find('text').remove();
         // $(circle).addClass('free');
-        // $this.speechBallon.show('Hola!');
         $(playerG).remove();
 
         if (player == null) {
@@ -233,8 +253,8 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     var cardsManager = new CardsManager($this, index, {}, point.x, point.y, rotation);
 
     // Speech
-    this.speechBallon = new SpeechBallon(point, rotation);
-    $(playerContainer).append(this.speechBallon.g);
+    this.speechBallon = new SpeechBallon(point, rotation, playerContainer);
+
 
 
     playerContainer.appendChild(chair);

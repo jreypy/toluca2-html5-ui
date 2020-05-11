@@ -183,6 +183,12 @@ td.free {
 }
 
 /*Table Messages*/
+.score {
+    font-size: 14pt;
+}
+.scorer-box {
+
+}
 .messages, .score {
     padding: 5px;
 }

@@ -4,6 +4,74 @@ var TrucoGamePlay = {
 
 var INITIAL_SIZE = 6;
 
+TableScorerRenderer = function (container, obj) {
+    var g = getG();
+    var points = getG();
+
+    var text = createText({x: 110, y: 12}, obj.teamName, 'yellow');
+    text.setAttributeNS(null, 'text-anchor', 'middle');
+    text.setAttributeNS(null, 'dominant-baseline', 'middle');
+
+
+    var rec = getRect(0, 0, 200, 90, 'black');
+
+    g.appendChild(rec);
+    g.appendChild(text);
+    g.appendChild(points);
+    $(text).addClass('score');
+
+    g.setAttribute('transform', ' translate(' + (obj.index * (H + 100) + 10) + ',' + 20 + ')');
+    container.appendChild(g);
+
+
+    function addLines(box, index) {
+        var conf = [
+            'M ' + '15 25 15 25',
+            'M ' + '15 25 15 45',
+            'M ' + '15 45 35 45',
+            'M ' + '35 45 35 25',
+            'M ' + '35 25 15 25',
+            'M ' + '15 25 35 45',
+        ]
+
+
+
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttributeNS(null, "d", conf[index]);
+        path.setAttribute('stroke', 'yellow');
+        path.setAttribute('stroke-width', '2');
+        box.appendChild(path);
+
+
+    }
+    function addBox(index, size) {
+        var box = getG();
+        for (var i=0; i<=size; i++){
+            addLines(box, i);
+        }
+        box.setAttribute('transform', ' translate(' + 25*index + ',' + 0 + ')');
+        $(box).addClass('scorer-box');
+        g.appendChild(box);
+    }
+    this.update = function (points) {
+        $(g).find('.scorer-box').remove();
+
+        var count = parseInt(points / 5);
+        var lines = points % 5;
+
+        for (var i=0; i<count; i++){
+            addBox(i, 5);
+        }
+        addBox(i, lines);
+
+
+    };
+    this.update();
+
+    // box.setAttribute('transform',  ' translate('+(i*30+30)+','+0+')');
+
+
+};
 trucoTableRender = function (context, toluca) {
     console.log('creating trucoTableRender', [context, toluca]);
     var $this = this;
@@ -14,7 +82,16 @@ trucoTableRender = function (context, toluca) {
     var container = document.getElementById('table-screen');
     var tableContainer = $('.container-table');
 
-
+    var tableScorer = [{
+        teamName: 'Nos',
+        renderer: null,
+        index: 0
+    }, {
+        teamName: 'Ellos',
+        renderer: null,
+        index: 1
+    }
+    ];
 
 
     var table = context.table;
@@ -31,21 +108,22 @@ trucoTableRender = function (context, toluca) {
     };
 
 
-    this.getTable = function(){
+    this.getTable = function () {
         return table;
     };
 
-    this.addComponent = function(comp){
+    this.addComponent = function (comp) {
         $(container).append($(comp));
     };
 
-    this.getContainer = function(){
+    this.getContainer = function () {
         return container;
     };
 
     this.render = function (size, users, playerIndex) {
 
-        if ($this.tableImage != null){
+
+        if ($this.tableImage != null) {
             $($this.tableImage).remove();
         }
         $(container).find('.table').remove();
@@ -56,7 +134,7 @@ trucoTableRender = function (context, toluca) {
         $(container).find('.player-circle').remove();
 
         var tableImage = {
-            '2': function(){
+            '2': function () {
 
                 var circle = getCircle(H, K, 190, WOODEN);
                 var circle2 = getCircle(H, K, 180, TABLE_COLOR);
@@ -65,7 +143,7 @@ trucoTableRender = function (context, toluca) {
                 container.appendChild(circle2);
                 return circle;
             },
-            '4': function(){
+            '4': function () {
                 H = H + 100;
                 var circle = getCircle(H, K, 190, WOODEN);
                 var circle2 = getCircle(H, K, 180, TABLE_COLOR);
@@ -74,7 +152,7 @@ trucoTableRender = function (context, toluca) {
                 container.appendChild(circle2);
                 return circle;
             },
-            '6': function(){
+            '6': function () {
                 H = H + 100;
                 var circle = getCircle(H, K, 190, WOODEN);
                 var circle2 = getCircle(H, K, 180, TABLE_COLOR);
@@ -130,11 +208,18 @@ trucoTableRender = function (context, toluca) {
         $this.playRequestPlayer = null;
 
         $this.tableImage = tableImage[size]();
+
+        tableScorer[0].renderer = new TableScorerRenderer(container, tableScorer[0]);
+        tableScorer[1].renderer = new TableScorerRenderer(container, tableScorer[1]);
+
         $($this.tableImage).addClass('table');
 
 
-        var textTable1 = createText({x:H-150, y:K-20},'1. Seleccione una silla haciendo click', 'yellow');
-        var textTable2 = createText({x:H-150, y:K+20},'2. Los equipos deben tener la misma cantidad de Jugadores para ser Iniciado', 'yellow');
+        var textTable1 = createText({x: H - 150, y: K - 20}, '1. Seleccione una silla haciendo click', 'yellow');
+        var textTable2 = createText({
+            x: H - 150,
+            y: K + 20
+        }, '2. Los equipos deben tener la misma cantidad de Jugadores para ser Iniciado', 'yellow');
 
         container.appendChild(textTable1);
         container.appendChild(textTable2);
@@ -222,11 +307,16 @@ trucoTableRender = function (context, toluca) {
         console.log('handended', event);
         //Hand ended and be ready ???
         // clean score
-        $(tableContainer).find('.score').find('p').remove();
+        // $(tableContainer).find('.score').find('p').remove();
         $(tableContainer).find('.messages').find('p').remove();
 
-        var $message = $('<p>' + event.game.team1.name + ': ' + event.game.team1.points + ' ' + event.game.team2.name + ': ' + event.game.team2.points + '</p>');
-        $(tableContainer).find('.score').append($message);
+        // var $message = $('<p>' + event.game.team1.name + ': ' + event.game.team1.points + ' ' + event.game.team2.name + ': ' + event.game.team2.points + '</p>');
+        // $(tableContainer).find('.score').append($message);
+
+        console.log('update score', event);
+
+        tableScorer[0].renderer.update(event.game.team1.points);
+        tableScorer[1].renderer.update(event.game.team2.points);
 
         for (var i in event.messages) {
             var $message = $('<p>' + event.messages[i].text + '</p>');
@@ -307,12 +397,23 @@ trucoTableRender = function (context, toluca) {
         var array1 = array.slice(0, move);
         var arrat2 = array.slice(move);
         var result = arrat2.concat(array1);
+
+        if (move % 2 == 1) {
+            var teamName = tableScorer[0].teamName;
+            tableScorer[0].teamName = tableScorer[1].teamName;
+            tableScorer[1].teamName = teamName;
+        }
         return result;
     }
 
 
     this.handStarted = function (event) {
         $(tableContainer).find('.messages').find('p').remove();
+        // update score
+
+        console.log('update score', event);
+        tableScorer[0].renderer.update(event.game.team1.points);
+        tableScorer[1].renderer.update(event.game.team2.points);
     };
 
 
@@ -340,7 +441,7 @@ trucoTableRender = function (context, toluca) {
     this.setStatus = function (status) {
         $this.status = status;
         $(container).removeClass('table-status-new');
-        $(container).addClass('table-status-'+($this.status+'').toLowerCase());
+        $(container).addClass('table-status-' + ($this.status + '').toLowerCase());
     };
 
     this.setupButtons = function (options) {

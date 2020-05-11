@@ -134,7 +134,7 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     $(playerContainer).click(function () {
         // unselect / select
         //$(circle).removeClass('free');
-        $this.speechBallon.show('Hola!');
+        //$this.speechBallon.show('Hola!');
 
         if (table.status == 'NEW') {
             toluca.setTablePosition(table.roomId, table.id, index);

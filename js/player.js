@@ -103,7 +103,7 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
 
 
     var playerG = getG();
-    // $(playerG).addClass('free');
+    $(playerG).addClass('free');
 
 
     if (index%2 == 0){

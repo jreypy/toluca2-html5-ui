@@ -154,25 +154,6 @@ trucoTableRender = function (context, toluca) {
             playerManager.paint();
 
 
-            // User Path
-            for (var r =0; r<3; r++){
-                var pathId= 'path_' + i + '_' + r;
-                var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('id', pathId);
-                var d = 'M ' + '0  0' + ' L ' + 0 + ' ' + (point1.y-point2.y)/(Math.abs(point1.y-point2.y))*(160-r*20);
-                // console.log('d', d);
-                path.setAttributeNS(null, "d", d);
-
-                // path.setAttribute('stroke', 'red');
-                // path.setAttribute('stroke-width', '2');
-
-                $(path).addClass('path');
-                $(container).append(path);
-            }
-            // // newLine.setAttribute('c', );
-
-
-
             // path.setAttribute('transform',  ' translate('+H+','+K+')');
 
 

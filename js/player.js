@@ -249,6 +249,21 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
 
 
 
+    /// Adding routes
+    for (var r =0; r<3; r++){
+        var pathId= 'path_' + index + '_' + r;
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('id', pathId);
+        var d = 'M ' + '0  0' + ' L ' + 0 + ' ' + (-1*150+r*20);
+        // console.log('d', d);
+        path.setAttributeNS(null, "d", d);
+        // path.setAttribute('stroke', 'red');
+        // path.setAttribute('stroke-width', '2');
+        $(path).addClass('path');
+        $(playerContainer).append(path);
+    }
+
+
     if (user != null) {
         $(text).html(user.username);
         $(playerG).removeClass('free');

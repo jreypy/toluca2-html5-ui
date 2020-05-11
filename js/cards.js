@@ -130,7 +130,7 @@ var Card = function (cardsManager, playerManager, data) {
     $(image).addClass('selectable');
 
     var translate = 'translate(' + (radious * -1) + ',' + (-1 * CARD_HEIGHT) + ') '
-    var rotate = 'rotate(' + ($rot * 40) + ',' + (H) + ',' + (K + 230) + ')';
+    var rotate = 'rotate(' + ($rot * 43) + ',' + (H) + ',' + (K + 220) + ')';
     var transform = rotate;
     image.setAttribute('transform', transform);
 

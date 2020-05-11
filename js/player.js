@@ -28,7 +28,7 @@ var SpeechBallon = function (point, rotation) {
 
     var text = createText({x: 40, y: -220}, 'Hola!', 'blue');
 
-    g.setAttributeNS(null, "transform", "rotate (" + (rotation) + ", " + radious + ", " + radious + ")");
+    //g.setAttributeNS(null, "transform", "rotate (" + (rotation) + ", " + radious + ", " + radious + ")");
     text.setAttributeNS(null, "transform", "rotate (" + (rotationText) + ", 40, -220)");
 
     $(g).append(text);
@@ -47,28 +47,44 @@ var SpeechBallon = function (point, rotation) {
 };
 
 var PlayerManager = function (tableManager, index, point, rotation, user, playerIndex) {
+    var playerName = 'LIBRE ';
+
     console.log('playermanager', [tableManager, index, point, rotation, user]);
     var table = tableManager.getTable();
     var $this = this;
     this.user = user;
 
-    var circle = getCircle(radious, radious, radious*0.5, 'yellow');
-    var innerCircle = getCircle(radious, radious, radious*0.4, 'yellow');
+    var circle = getCircle(H, K+230, radious*0.5, 'yellow');
+    var innerCircle = getCircle(H, K+230, radious*0.4, 'yellow');
+
+    var text = addText(playerName);
+
+    text.setAttributeNS(null, 'x', H);
+    text.setAttributeNS(null, 'y', (K + 230 + radious));
+    text.setAttributeNS(null, 'text-anchor', 'middle');
+    text.setAttributeNS(null, 'dominant-baseline', 'middle');
+
+    var textRotation = ' rotate (' + (360-rotation) + ',' +  H + ',' + (K + 230) + ')';
+    text.setAttribute('transform', textRotation)
+
+
+
     $(innerCircle).addClass('inner-circle');
 
 
     console.log('playerIndex', playerIndex);
 
-    var chair = getChair(radious, radious);
-    var translate = ' rotate (' + rotation + ',' + radious + ',' + radious + ')';
-    chair.setAttribute('transform', translate)
-
-    // add Chair
+    var chair = getChair(H, K+200);
 
 
-    var g = getG();
+    var playerContainer = getG();
+
+
+    $(playerContainer).addClass('selectable');
+
+
     var playerG = getG();
-    $(playerG).addClass('free');
+    // $(playerG).addClass('free');
 
 
     if (index%2 == 0){
@@ -78,26 +94,26 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
         $(chair).addClass('team2');
         $(playerG).addClass('team2');
     }
-
-    var playerName = 'LIBRE ';
-
-    var text = addText(playerName);
-
-    text.setAttributeNS(null, 'x', radious);
-    text.setAttributeNS(null, 'y', radious*2);
-    text.setAttributeNS(null, 'text-anchor', 'middle');
-    text.setAttributeNS(null, 'dominant-baseline', 'middle');
+    $(chair).addClass('player-'+index);
 
 
-    var translate = 'translate(' + (H + point.x - radious) + ',' + (K - point.y - radious) + ') '
-    g.setAttribute('transform', translate)
-    playerG.setAttribute('transform', translate);
 
-    $(g).addClass('selectable');
 
-    $(g).click(function () {
+
+
+//    var translate = 'translate(' + (H + point.x - radious) + ',' + (K - point.y - radious) + ') '
+    var newTranslate = ' rotate (' + (rotation) + ',' + H + ',' + K + ')';
+
+    playerContainer.setAttribute('transform', newTranslate)
+    playerG.setAttribute('transform', newTranslate)
+
+
+    // playerG.setAttribute('transform', translate);
+
+
+
+    $(playerContainer).click(function () {
         // unselect / select
-
         //$(circle).removeClass('free');
         if (table.status == 'NEW') {
             toluca.setTablePosition(table.roomId, table.id, index);
@@ -215,17 +231,17 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
 
     // Speech
     this.speechBallon = new SpeechBallon(point, rotation);
-    $(g).append(this.speechBallon.g);
+    $(playerContainer).append(this.speechBallon.g);
 
 
-    g.appendChild(chair);
+    playerContainer.appendChild(chair);
+
     playerG.appendChild(circle);
     playerG.appendChild(innerCircle);
     playerG.appendChild(text);
 
 
-
-    $(g).addClass('player');
+    $(playerContainer).addClass('player');
     $(playerG).addClass('player-circle');
 
 
@@ -236,7 +252,7 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     }
 
     this.getComponent = function(){
-        return g;
+        return playerContainer;
     };
     this.addComponent = function(image){
         $(playerG).remove();
@@ -249,12 +265,12 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     };
 
     this.paint = function () {
-        tableManager.addComponent(g);
+        tableManager.addComponent(playerContainer);
         tableManager.addComponent(playerG);
     };
 
     this.repaint = function () {
-        $(g).remove();
+        $(playerContainer).remove();
         $(playerG).remove();
         $this.paint();
     };

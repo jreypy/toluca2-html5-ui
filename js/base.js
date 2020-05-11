@@ -117,9 +117,9 @@ var getImage = function (imageName, point) {
 var getChair = function (x, y) {
     var g = createG(radious, radious);
     // g.appendChild(getCircle(x,y,radious, 'yellow'));
-    g.appendChild(getRect(0,0, radious*2, radious*2-25, WOODEN));
-    g.appendChild(getRect(0,radious*2-20, radious*2, 20, WOODEN));
-    var pillow = getRect(5,5, radious*2-10, radious*2-35, 'yellow');
+    g.appendChild(getRect(x-radious,y, radious*2, radious*2-25, WOODEN));
+    g.appendChild(getRect(x-radious,y + radious*2-20, radious*2, 12, WOODEN));
+    var pillow = getRect(x-radious+5,y+5, radious*2-10, radious*2-35, 'yellow');
     $(pillow).addClass('pillow');
     g.appendChild(pillow);
     return g;

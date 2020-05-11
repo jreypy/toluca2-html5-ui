@@ -57,6 +57,7 @@ trucoTableRender = function (context, toluca) {
 
         var tableImage = {
             '2': function(){
+
                 var circle = getCircle(H, K, 190, WOODEN);
                 var circle2 = getCircle(H, K, 180, TABLE_COLOR);
 
@@ -65,16 +66,18 @@ trucoTableRender = function (context, toluca) {
                 return circle;
             },
             '4': function(){
-                var circle = getCircle(H+100, K, 190, WOODEN);
-                var circle2 = getCircle(H+100, K, 180, TABLE_COLOR);
+                H = H + 100;
+                var circle = getCircle(H, K, 190, WOODEN);
+                var circle2 = getCircle(H, K, 180, TABLE_COLOR);
 
                 container.appendChild(circle);
                 container.appendChild(circle2);
                 return circle;
             },
             '6': function(){
-                var circle = getCircle(H+100, K, 190, WOODEN);
-                var circle2 = getCircle(H+100, K, 180, TABLE_COLOR);
+                H = H + 100;
+                var circle = getCircle(H, K, 190, WOODEN);
+                var circle2 = getCircle(H, K, 180, TABLE_COLOR);
 
                 container.appendChild(circle);
                 container.appendChild(circle2);

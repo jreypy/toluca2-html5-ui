@@ -129,19 +129,21 @@ td.free {
     display: block;
 }
 .pillow {
-    opacity: 0.3;
+    opacity: 0.5;
 }
 .player-circle.free, .player-circle.free {
     display: none;
 }
 
 .team1 .pillow, .player-circle.team1 .inner-circle {
-    fill: red;
+    fill: darkblue;
 }
 
 .team2 .pillow, .player-circle.team2 .inner-circle {
-    fill: blue;
+    fill: black;
 }
+
+
 
 
 /*.player .team1 {*/

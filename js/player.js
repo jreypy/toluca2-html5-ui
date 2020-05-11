@@ -160,13 +160,16 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
 
     this.receivingCards = function (user, cards) {
         console.log('playermanger receiving cards', [$this.user.id, cards, rotation])
+
         cardsManager.cleanCards();
-        tableManager.addComponent(g);
+        tableManager.addComponent(playerContainer);
+
         for (var i in cards) {
             cardsManager.addCard(this, i, cards[i].type, cards[i].value, PRINCIPAL.id == $this.user.id, rotation);
         }
         //
     };
+
 
     this.playRequest = function (event) {
         console.log('play requested');
@@ -256,7 +259,7 @@ var PlayerManager = function (tableManager, index, point, rotation, user, player
     };
     this.addComponent = function(image){
         $(playerG).remove();
-        tableManager.addComponent(image);
+        $(playerContainer).append(image);
         tableManager.addComponent(playerG);
 
     }

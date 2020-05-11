@@ -44,13 +44,14 @@ var getCardAnimation = function (index, round) {
 
 var Card = function (cardsManager, playerManager, data) {
     var CARD_HEIGHT = 80;
+    var CARD_WEIGHT = 35;
 
     console.log('creating card', data);
     var $this = this;
     $this.data = data;
     $this.data.played = false;
     console.log('add card', data);
-    var image = getDorsoImage({x: H + data.x, y: K - data.y});
+    var image = getDorsoImage({x: H-CARD_WEIGHT, y: K+230-CARD_HEIGHT});
 
     this.flip = function () {
         if (data.flipped) {
@@ -132,7 +133,7 @@ var Card = function (cardsManager, playerManager, data) {
     var rotate = 'rotate(' + (data.rot + $rot * 40) + ',' + (H + data.x + radious) + ',' + (K - data.y + CARD_HEIGHT) + ')';
     var transform = translate + ' ' + rotate;
 
-    image.setAttribute('transform', transform);
+    // image.setAttribute('transform', transform);
 
     $(image).addClass('card');
 
